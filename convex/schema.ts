@@ -88,6 +88,20 @@ const authTables = {
   })
     .index("accountId", ["accountId"])
     .index("code", ["code"]),
+
+  authRefreshTokens: defineTable({
+    sessionId: v.string(),
+    parentRefreshTokenId: v.optional(v.string()),
+    expirationTime: v.float64(),
+    firstUsedTime: v.optional(v.float64()),
+    sessionIdAndParentRefreshTokenId: v.optional(v.string()),
+  })
+    .index("sessionId", ["sessionId"])
+    .index("parentRefreshTokenId", ["parentRefreshTokenId"])
+    .index("sessionIdAndParentRefreshTokenId", [
+      "sessionId",
+      "sessionIdAndParentRefreshTokenId",
+    ]),
 };
 
 export default defineSchema({
