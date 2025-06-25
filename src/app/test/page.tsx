@@ -3,6 +3,7 @@ import { useQuery } from "convex/react"; //used for queries similar ish to fireb
 import { api } from "../../../convex/_generated/api"; //get the convex api ref
 
 function TestPage() {
+  //note!! inside the convex folder are public convex functions
   // "sample" is defined from the filename created in convex folder
   // get is the method defined inside the "sample" folder
   // remember that get uses a query that is why you use useQuery
