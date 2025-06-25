@@ -1,5 +1,6 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
+import { auth } from "./auth";
 
 const http = httpRouter();
 
@@ -44,4 +45,5 @@ http.route({
   }),
 });
 
+auth.addHttpRoutes(http);
 export default http;
