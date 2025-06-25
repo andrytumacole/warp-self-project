@@ -66,24 +66,44 @@ function SignInCard(props: Readonly<SignInCardProps>) {
       )}
       <CardContent className="space-y-5 px-0 pb-0">
         <form onSubmit={handleSubmit} className="space-y-2.5">
-          <input
-            type="email"
-            placeholder="Enter your email address"
-            value={email}
-            required
-            className="border border-gray-500 p-2 w-full rounded-md "
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isLoading}
-          />
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="border border-gray-500 p-2 w-full rounded-md border-solid"
-            disabled={isLoading}
-          />
+          <div>
+            <label
+              htmlFor="email"
+              className="text-left flex text-sm font-semibold"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="border border-gray-500 p-2 w-full rounded-md "
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="text-left flex text-sm font-semibold"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="border border-gray-500 p-2 w-full rounded-md border-solid"
+              disabled={isLoading}
+            />
+          </div>
+
           <Button
             className="w-full"
             size={"lg"}
