@@ -4,12 +4,13 @@ import { Validator, v } from "convex/values";
 // The users, accounts, sessions and verificationTokens tables are modeled
 // from https://authjs.dev/getting-started/adapters#models
 
-//copy pasted from next-auth adapter docs
+//copy pasted from next-auth adapter
 
 export const userSchema = {
   email: v.string(),
   name: v.optional(v.string()),
   emailVerified: v.optional(v.number()),
+  emailVerificationTime: v.optional(v.float64()),
   image: v.optional(v.string()),
 };
 
@@ -21,11 +22,13 @@ export const sessionSchema = {
 
 export const accountSchema = {
   userId: v.id("users"),
-  type: v.union(
-    v.literal("email"),
-    v.literal("oidc"),
-    v.literal("oauth"),
-    v.literal("webauthn")
+  type: v.optional(
+    v.union(
+      v.literal("email"),
+      v.literal("oidc"),
+      v.literal("oauth"),
+      v.literal("webauthn")
+    )
   ),
   provider: v.string(),
   providerAccountId: v.string(),
@@ -60,7 +63,7 @@ const authTables = {
   sessions: defineTable(sessionSchema)
     .index("sessionToken", ["sessionToken"])
     .index("userId", ["userId"]),
-  accounts: defineTable(accountSchema)
+  authAccounts: defineTable(accountSchema)
     .index("providerAndAccountId", ["provider", "providerAccountId"])
     .index("userId", ["userId"]),
   verificationTokens: defineTable(verificationTokenSchema).index(
@@ -70,6 +73,21 @@ const authTables = {
   authenticators: defineTable(authenticatorSchema)
     .index("userId", ["userId"])
     .index("credentialID", ["credentialID"]),
+  authVerifiers: defineTable({
+    signature: v.optional(v.string()),
+    timestamp: v.optional(v.float64()),
+  }).index("signature", ["signature"]),
+
+  authVerificationCodes: defineTable({
+    accountId: v.id("authAccounts"),
+    token: v.optional(v.string()),
+    code: v.string(),
+    expirationTime: v.float64(),
+    provider: v.string(),
+    verifier: v.string(),
+  })
+    .index("accountId", ["accountId"])
+    .index("code", ["code"]),
 };
 
 export default defineSchema({

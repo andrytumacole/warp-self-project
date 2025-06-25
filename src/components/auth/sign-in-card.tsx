@@ -10,6 +10,8 @@ import {
 } from "../ui/card";
 import { Separator } from "../ui/separator";
 import { SignInFlow } from "@/types/global";
+import { useAuthActions } from "@convex-dev/auth/react";
+
 import { useState } from "react";
 
 interface SignInCardProps {
@@ -17,6 +19,7 @@ interface SignInCardProps {
 }
 
 function SignInCard(props: Readonly<SignInCardProps>) {
+  const { signIn } = useAuthActions();
   const { setSignType } = props;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +27,10 @@ function SignInCard(props: Readonly<SignInCardProps>) {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(email + " " + password);
+  }
+
+  function handleGoogleSignIn() {
+    signIn("google");
   }
 
   return (
@@ -50,7 +57,7 @@ function SignInCard(props: Readonly<SignInCardProps>) {
             required
             className="border border-gray-500 p-2 w-full rounded-md border-solid"
           />
-          <Button className="w-full" size={"lg"}>
+          <Button className="w-full" size={"lg"} type="submit">
             Sign In
           </Button>
         </form>
@@ -60,7 +67,7 @@ function SignInCard(props: Readonly<SignInCardProps>) {
             className="w-full"
             variant={"outline"}
             size={"lg"}
-            type="submit"
+            onClick={() => handleGoogleSignIn()}
           >
             <FcGoogle />
             Sign In with Google
