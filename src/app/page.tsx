@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+import AuthForm from "@/components/auth/auth-form";
 
 export default function Home() {
   return (
-    <div className="flex justify-center">
-      <Button variant={"destructive"}>hello madafaka</Button>
+    <div className="flex justify-center h-full items-center">
+      <AuthForm />
     </div>
   );
 }
