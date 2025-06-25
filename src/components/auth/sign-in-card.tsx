@@ -1,5 +1,6 @@
 import { FcGoogle } from "react-icons/fc";
 
+import { TriangleAlert } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -23,14 +24,32 @@ function SignInCard(props: Readonly<SignInCardProps>) {
   const { setSignType } = props;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(email + " " + password);
+    setIsLoading(true);
+
+    try {
+      await signIn("password", { email, password, flow: "signIn" });
+    } catch (e) {
+      setError("Invalid username or password");
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  function handleGoogleSignIn() {
-    signIn("google");
+  async function handleGoogleSignIn() {
+    setIsLoading(true);
+    try {
+      await signIn("google");
+    } catch (e) {
+      setError("Error: " + e);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -39,6 +58,12 @@ function SignInCard(props: Readonly<SignInCardProps>) {
         <CardTitle>Log in to continue</CardTitle>
         <CardDescription>Use your email to continue</CardDescription>
       </CardHeader>
+      {error && (
+        <div className="bg-red-50">
+          <TriangleAlert />
+          <p>{error}</p>
+        </div>
+      )}
       <CardContent className="space-y-5 px-0 pb-0">
         <form onSubmit={handleSubmit} className="space-y-2.5">
           <input
@@ -48,6 +73,7 @@ function SignInCard(props: Readonly<SignInCardProps>) {
             required
             className="border border-gray-500 p-2 w-full rounded-md "
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
           />
           <input
             type="password"
@@ -56,8 +82,14 @@ function SignInCard(props: Readonly<SignInCardProps>) {
             onChange={(e) => setPassword(e.target.value)}
             required
             className="border border-gray-500 p-2 w-full rounded-md border-solid"
+            disabled={isLoading}
           />
-          <Button className="w-full" size={"lg"} type="submit">
+          <Button
+            className="w-full"
+            size={"lg"}
+            type="submit"
+            disabled={isLoading}
+          >
             Sign In
           </Button>
         </form>

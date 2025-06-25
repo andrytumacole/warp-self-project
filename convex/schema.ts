@@ -39,6 +39,7 @@ export const accountSchema = {
   scope: v.optional(v.string()),
   id_token: v.optional(v.string()),
   session_state: v.optional(v.string()),
+  secret: v.optional(v.string()),
 };
 
 export const verificationTokenSchema = {
@@ -102,6 +103,12 @@ const authTables = {
       "sessionId",
       "sessionIdAndParentRefreshTokenId",
     ]),
+
+  authRateLimits: defineTable({
+    identifier: v.string(),
+    attemptsLeft: v.float64(),
+    lastAttemptTime: v.float64(),
+  }).index("identifier", ["identifier"]),
 };
 
 export default defineSchema({
