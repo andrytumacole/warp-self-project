@@ -11,8 +11,12 @@ const inPublicPages = createRouteMatcher(publicPages);
 console.log("middleware found!");
 
 export default convexAuthNextjsMiddleware(async (req) => {
-  if (!inPublicPages(req) && !(await isAuthenticatedNextjs())) {
+  const isAuthenticated = await isAuthenticatedNextjs();
+  if (!inPublicPages(req) && !isAuthenticated) {
     return nextjsMiddlewareRedirect(req, "/auth");
+  }
+  if (inPublicPages(req) && isAuthenticated) {
+    return nextjsMiddlewareRedirect(req, "/");
   }
 });
 
