@@ -9,7 +9,11 @@ function AuthForm() {
   const [signType, setSignType] = useState<SignInFlow>("signIn");
   return (
     <div className="flex justify-center md:h-auto md:w-[420px]">
-      {signType === "signIn" ? <SignInCard /> : <SignUpCard />}
+      {signType === "signIn" ? (
+        <SignInCard setSignType={setSignType} />
+      ) : (
+        <SignUpCard setSignType={setSignType} />
+      )}
     </div>
   );
 }
