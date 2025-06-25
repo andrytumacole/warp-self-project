@@ -10,6 +10,7 @@ import {
 } from "../ui/card";
 import { Separator } from "../ui/separator";
 import { SignInFlow } from "@/types/global";
+import { useState } from "react";
 
 interface SignInCardProps {
   setSignType: (signType: SignInFlow) => void;
@@ -17,6 +18,14 @@ interface SignInCardProps {
 
 function SignInCard(props: Readonly<SignInCardProps>) {
   const { setSignType } = props;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log(email + " " + password);
+  }
+
   return (
     <Card className="text-center p-4 h-full w-full">
       <CardHeader>
@@ -24,28 +33,35 @@ function SignInCard(props: Readonly<SignInCardProps>) {
         <CardDescription>Use your email to continue</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5 px-0 pb-0">
-        <form action="" className="space-y-2.5">
+        <form onSubmit={handleSubmit} className="space-y-2.5">
           <input
             type="email"
             placeholder="Enter your email address"
-            value={""}
+            value={email}
             required
             className="border border-gray-500 p-2 w-full rounded-md "
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Enter your password"
-            value={""}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             className="border border-gray-500 p-2 w-full rounded-md border-solid"
           />
-          <Button type="submit" className="w-full" size={"lg"}>
+          <Button className="w-full" size={"lg"}>
             Sign In
           </Button>
         </form>
         <Separator />
         <div className="flex justify-center">
-          <Button className="w-full" variant={"outline"} size={"lg"}>
+          <Button
+            className="w-full"
+            variant={"outline"}
+            size={"lg"}
+            type="submit"
+          >
             <FcGoogle />
             Sign In with Google
           </Button>
