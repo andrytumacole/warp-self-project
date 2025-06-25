@@ -21,11 +21,11 @@ function SignInCard(props: Readonly<SignInCardProps>) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(email + " " + password + " " + confirm);
+    console.log(email + " " + password + " " + confirmPassword);
   }
 
   return (
@@ -55,8 +55,8 @@ function SignInCard(props: Readonly<SignInCardProps>) {
           <input
             type="password"
             placeholder="Confirm your password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             required
             className="border border-gray-500 p-2 w-full rounded-md border-solid"
           />
