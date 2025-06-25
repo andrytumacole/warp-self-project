@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "conc": "concurrently \"npm run dev\" \"npx convex dev\""
   },
   "dependencies": {
     "@auth/core": "^0.37.0",
@@ -15,6 +16,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "concurrently": "^9.2.0",
     "convex": "^1.25.0",
     "convex-helpers": "^0.1.95",
     "jose": "^6.0.11",
