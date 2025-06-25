@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { SignInFlow } from "@/types/global";
-import SignInCard from "./signInCard";
-import SignUpCard from "./signUpCard";
+import SignInCard from "./sign-in-card";
+import SignUpCard from "./sign-up-card";
 
 function AuthForm() {
   const [signType, setSignType] = useState<SignInFlow>("signIn");
