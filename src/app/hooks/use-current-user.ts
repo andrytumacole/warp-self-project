@@ -1,10 +1,10 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
-function useCurrentUser() {
-  const data = useQuery(api.users.current);
-  const isLoading = data === undefined;
-  return { data, isLoading };
+function useGetCurrentUser() {
+  const currUser = useQuery(api.users.current);
+  const isLoading = currUser === undefined;
+  return { currUser, isLoading };
 }
 
-export default useCurrentUser;
+export default useGetCurrentUser;

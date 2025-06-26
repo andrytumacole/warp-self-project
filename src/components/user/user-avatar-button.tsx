@@ -8,28 +8,48 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "../ui/button";
 import { useAuthActions } from "@convex-dev/auth/react";
+import useGetCurrentUser from "@/app/hooks/use-current-user";
+import { Loader, LogOut } from "lucide-react";
 
 function UserAvatarButton() {
   const { signOut } = useAuthActions();
+  const { currUser, isLoading } = useGetCurrentUser();
+
+  if (!currUser) {
+    return;
+  }
+
+  const { image, name } = currUser;
+  const avatarFallbackContent = name!.charAt(0).toUpperCase();
+
   async function handleLogOut() {
     await signOut();
   }
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger className="outline-none relative">
-        <Avatar className="size-20 hover:opacity-75 transition">
-          <AvatarImage />
-          <AvatarFallback></AvatarFallback>
-        </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" side="bottom" className="w-60">
-        <DropdownMenuItem>
-          <Button onClick={() => handleLogOut()}>Log out</Button>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      {!isLoading ? (
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger className="outline-none relative">
+            <Avatar className="size-20 hover:opacity-75 transition">
+              <AvatarImage src={image} alt={name} />
+              <AvatarFallback>{avatarFallbackContent}</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" side="bottom" className="w-60">
+            <DropdownMenuItem
+              onClick={() => handleLogOut()}
+              className="w-full flex justify-start hover:bg-gray-300"
+            >
+              <LogOut />
+              Log out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <Loader className="size-4 animate-spin text-muted-foreground" />
+      )}
+    </>
   );
 }
 
