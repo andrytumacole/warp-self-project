@@ -10,7 +10,7 @@ function Modals() {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) return; //entire sequence of isMounted is for hydration erros
+  if (!isMounted) return; //entire sequence of isMounted is for hydration errors
   //ensures that component is mounted or loaded on the client side
 
   return <CreateWorkspaceModal />;
