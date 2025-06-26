@@ -15,4 +15,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
       },
     }),
   ],
+  callbacks: {
+    //add logic here to prevent user creation in sign in
+  },
 });
