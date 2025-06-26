@@ -1,4 +1,3 @@
-import { ConvexAdapter } from "@/app/ConvexAdapter";
 import { SignJWT, importPKCS8 } from "jose";
 import NextAuth from "next-auth";
 
@@ -9,10 +8,7 @@ const CONVEX_SITE_URL = process.env.NEXT_PUBLIC_CONVEX_URL!.replace(
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: true,
-  providers: [
-    // ... configured providers
-  ],
-  adapter: ConvexAdapter,
+  providers: [],
   callbacks: {
     async session({ session }) {
       const privateKey = await importPKCS8(

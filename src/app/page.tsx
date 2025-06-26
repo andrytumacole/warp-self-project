@@ -10,7 +10,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex justify-center h-full items-center">
+    <div className="flex flex-col justify-center h-full items-center">
       Logged in!!
       <Button onClick={() => handleLogOut()}>Log out</Button>
     </div>
