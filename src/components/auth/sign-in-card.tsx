@@ -59,9 +59,9 @@ function SignInCard(props: Readonly<SignInCardProps>) {
         <CardDescription>Use your email to continue</CardDescription>
       </CardHeader>
       {error && (
-        <div className="bg-red-50">
+        <div className=" flex justify-center p-2 mb-4 text-destructive flex-col items-center">
           <TriangleAlert />
-          <p>{error}</p>
+          <p className="font-semibold">{error}</p>
         </div>
       )}
       <CardContent className="space-y-5 px-0 pb-0">
