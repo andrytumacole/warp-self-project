@@ -11,18 +11,41 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormEvent, useState } from "react";
+import { useCreateWorkspace } from "@/app/api/use-create-workspace";
 
 function CreateWorkspaceModal() {
   const [isModalOpen, setIsModalOpen] = useCreateWorkspaceModal();
   const [workspaceInfo, setWorkspaceInfo] = useState("");
+  const { isPending, error, mutateAsync } = useCreateWorkspace({
+    onSuccess: handleSuccess,
+    onError: handleError,
+    onSettled: handleSettled,
+  });
 
   function handleClose() {
     setIsModalOpen(false);
   }
 
-  function handleCreate(e: FormEvent<HTMLFormElement>) {
+  async function handleCreate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(workspaceInfo);
+    const workspaceId = await mutateAsync({
+      name: workspaceInfo,
+    });
+    console.log(workspaceId);
+  }
+
+  function handleSuccess() {
+    console.log("successfully created workspace");
+  }
+
+  function handleError() {
+    console.log("Something went wrong in creating the workspace");
+    console.log("error: " + error);
+  }
+
+  function handleSettled() {
+    console.log("Finished! You can now proceed");
+    setWorkspaceInfo("");
   }
 
   return (
@@ -37,11 +60,14 @@ function CreateWorkspaceModal() {
             required
             autoFocus
             minLength={3}
+            disabled={isPending}
             onChange={(e) => setWorkspaceInfo(e.target.value)}
             placeholder={`Workspace name e.g. "Work", "Personal", "Home"`}
           />
           <div className="flex justify-end">
-            <Button type="submit">Create</Button>
+            <Button type="submit" disabled={isPending}>
+              Create
+            </Button>
           </div>
         </form>
       </DialogContent>
