@@ -109,6 +109,12 @@ const authTables = {
     attemptsLeft: v.float64(),
     lastAttemptTime: v.float64(),
   }).index("identifier", ["identifier"]),
+
+  workspaces: defineTable({
+    name: v.string(),
+    userId: v.id("users"),
+    joinCode: v.string(),
+  }),
 };
 
 export default defineSchema({
