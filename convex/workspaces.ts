@@ -31,7 +31,8 @@ export const getById = query({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
     await checkAuthorizedUser(ctx);
-    return await ctx.db.get(args.id);
+    const workspace = await ctx.db.get(args.id);
+    return workspace;
   },
 });
 
