@@ -27,7 +27,7 @@ function Switcher() {
   );
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button className=" outline-none focus:ring-0 focus: ring-offset-0 size-9 overflow-hidden bg-white hover:bg-white/80 text-slate-800 font-semibold text-xl">
           {isFetchingWorkspace ? (
             <Loader className="size-5 animate-spin shrink-0" />
