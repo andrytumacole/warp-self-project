@@ -1,5 +1,4 @@
 import { query } from "./_generated/server";
-import { ConvexError } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const current = query({
@@ -7,7 +6,7 @@ export const current = query({
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
 
-    if (userId === null) throw new ConvexError("Error: User not found");
+    if (userId === null) return null; //throw error here if necessary
 
     return await ctx.db.get(userId);
   },
