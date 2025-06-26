@@ -33,7 +33,9 @@ function UserAvatarButton() {
           <DropdownMenuTrigger className="outline-none relative">
             <Avatar className="size-20 hover:opacity-75 transition">
               <AvatarImage src={image} alt={name} />
-              <AvatarFallback>{avatarFallbackContent}</AvatarFallback>
+              <AvatarFallback className="text-white bg-sky-500 text-3xl">
+                {avatarFallbackContent}
+              </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom" className="w-60">
