@@ -1,6 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { mutation, query } from "./_generated/server";
+import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 
 export const get = query({
   args: {},
@@ -14,12 +14,7 @@ export const create = mutation({
     name: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ConvexError({
-        message: "[client][workspace creation]: Unauthorized user",
-      });
-    }
+    const userId = await checkAuthorizedUser(ctx);
     //edit this later
     const joinCode = "1234";
     const workspaceId = await ctx.db.insert("workspaces", {
@@ -31,3 +26,21 @@ export const create = mutation({
     return workspaceId;
   },
 });
+
+export const getById = query({
+  args: { id: v.id("workspaces") },
+  handler: async (ctx, args) => {
+    await checkAuthorizedUser(ctx);
+    return await ctx.db.get(args.id);
+  },
+});
+
+async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) {
+    throw new ConvexError({
+      message: "[client][workspace creation]: Unauthorized user",
+    });
+  }
+  return userId;
+}
