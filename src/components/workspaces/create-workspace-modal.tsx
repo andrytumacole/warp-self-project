@@ -7,13 +7,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
+import { toast } from "sonner";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormEvent, useState } from "react";
 import { useCreateWorkspace } from "@/app/api/use-create-workspace";
+import { useRouter } from "next/navigation";
 
 function CreateWorkspaceModal() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useCreateWorkspaceModal();
   const [workspaceInfo, setWorkspaceInfo] = useState("");
   const { isPending, error, mutateAsync } = useCreateWorkspace({
@@ -32,10 +34,14 @@ function CreateWorkspaceModal() {
       name: workspaceInfo,
     });
     console.log(workspaceId);
+    router.replace(`/workspace/${workspaceId}`);
   }
 
   function handleSuccess() {
     console.log("successfully created workspace");
+    toast("Successfully created workspace!", {
+      description: workspaceInfo,
+    });
   }
 
   function handleError() {
@@ -45,6 +51,7 @@ function CreateWorkspaceModal() {
 
   function handleSettled() {
     console.log("Finished! You can now proceed");
+    setIsModalOpen(false);
     setWorkspaceInfo("");
   }
 
