@@ -1,6 +1,7 @@
 "use client";
 
 import Toolbar from "@/components/workspaces/toolbar";
+import Sidebar from "@/components/workspaces/sidebar";
 
 export default function WorkspaceIdLayout({
   children,
@@ -10,7 +11,11 @@ export default function WorkspaceIdLayout({
   return (
     <div className="h-full bg-[#f5f5f5]">
       <Toolbar />
-      {children}
+      {/* offset by toolbar height */}
+      <div className="flex h-[calc(100vh-2.5rem)]">
+        <Sidebar />
+        {children}
+      </div>
     </div>
   );
 }
