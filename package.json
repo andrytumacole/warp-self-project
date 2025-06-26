@@ -20,6 +20,7 @@
     "convex": "^1.25.0",
     "convex-helpers": "^0.1.95",
     "jose": "^6.0.11",
+    "jotai": "^2.12.5",
     "lucide-react": "^0.523.0",
     "next": "14.2.30",
     "next-auth": "^5.0.0-beta.29",
