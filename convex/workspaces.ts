@@ -67,7 +67,7 @@ export const getById = query({
     const userId = await checkAuthorizedUser(ctx);
 
     //query if the current user is a member of the args workspace
-    const member = await ctx.db
+    const membershipInfo = await ctx.db
       .query("membershipInfos")
       .withIndex("by_workspace_id_user_id", (q) =>
         q.eq("workspaceId", args.id).eq("userId", userId)
@@ -75,10 +75,37 @@ export const getById = query({
       .unique();
 
     //user is not a member of the request workspace by id
-    if (!member) return null;
+    if (!membershipInfo) return null;
 
     const workspace = await ctx.db.get(args.id);
     return workspace;
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("workspaces"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+    //query if the current user is a member of the args workspace
+    const membershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.id).eq("userId", userId)
+      )
+      .unique();
+
+    //user is not a member of the request workspace by id
+    if (!membershipInfo || membershipInfo.role !== "admin")
+      throw new ConvexError({
+        message: "[client][workspace preferences]: Unauthorized user",
+      });
+
+    await ctx.db.patch(args.id, {
+      name: args.name,
+    });
   },
 });
 
