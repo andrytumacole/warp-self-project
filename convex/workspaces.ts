@@ -111,6 +111,46 @@ export const update = mutation({
   },
 });
 
+export const remove = mutation({
+  args: {
+    id: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+    //query if the current user is a member of the args workspace
+    const membershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.id).eq("userId", userId)
+      )
+      .unique();
+
+    //user is not a member of the request workspace by id
+    if (!membershipInfo || membershipInfo.role !== "admin")
+      throw new ConvexError({
+        message: "[client][workspace preferences]: Unauthorized user",
+      });
+
+    //get all membership info related to the workspace to be deleted
+    const [membershipInfos] = await Promise.all([
+      ctx.db
+        .query("membershipInfos")
+        .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+        .collect(),
+    ]);
+
+    //delete each associated membership info
+    for (const memInfo of membershipInfos) {
+      await ctx.db.delete(memInfo._id);
+    }
+
+    //delete the workspace doc
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+});
+
 async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
