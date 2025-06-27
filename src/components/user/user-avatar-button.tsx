@@ -11,10 +11,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthActions } from "@convex-dev/auth/react";
 import useGetCurrentUser from "@/app/api/use-current-user";
 import { Loader, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function UserAvatarButton() {
   const { signOut } = useAuthActions();
   const { currUser, isLoading } = useGetCurrentUser();
+  const router = useRouter();
 
   if (!currUser) {
     return;
@@ -25,6 +27,7 @@ function UserAvatarButton() {
 
   async function handleLogOut() {
     await signOut();
+    router.replace("/");
   }
   return (
     <>
