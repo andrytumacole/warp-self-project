@@ -10,6 +10,7 @@ import {
 import { TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 import useUpdateWorkspace from "@/app/api/use-update-workspace";
+import useRemoveWorkspace from "@/app/api/use-delete-workspace";
 
 interface PreferencesModalProp {
   isOpen: boolean;
@@ -23,27 +24,53 @@ function PreferencesModal(props: Readonly<PreferencesModalProp>) {
   const {
     mutateAsync: update,
     isPending: isUpdatingWorkspace,
-    error,
+    error: updateError,
   } = useUpdateWorkspace({
-    onSuccess: handleSuccess,
-    onError: handleError,
-    onSettled: handleSettled,
+    onSuccess: handleUpdateSuccess,
+    onError: handleUpdateError,
+    onSettled: handleUpdateSettled,
+  });
+  const {
+    mutateAsync: remove,
+    isPending: isRemovingWorkspace,
+    error: deleteError,
+  } = useRemoveWorkspace({
+    onSuccess: handleDeleteSuccess,
+    onError: handleDeleteError,
+    onSettled: handleDeleteSettled,
   });
 
-  function handleSuccess() {
+  function handleUpdateSuccess() {
     console.log("successfully created workspace");
     toast("Successfully updated workspace!", {
       description: initialVal,
     });
   }
 
-  function handleError() {
+  function handleUpdateError() {
     console.log("Something went wrong in updating the workspace");
-    console.log("error: " + error);
+    console.log("error: " + updateError);
   }
 
-  function handleSettled() {
+  function handleUpdateSettled() {
     console.log("Finished updating!");
+    setIsOpen(false);
+  }
+
+  function handleDeleteSuccess() {
+    console.log("successfully deleted workspace");
+    toast("Successfully deleted workspace!", {
+      description: initialVal,
+    });
+  }
+
+  function handleDeleteError() {
+    console.log("Something went wrong in deleting the workspace");
+    console.log("error: " + deleteError);
+  }
+
+  function handleDeleteSettled() {
+    console.log("Finished deleting!");
     setIsOpen(false);
   }
 
