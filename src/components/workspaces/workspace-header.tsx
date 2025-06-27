@@ -26,7 +26,7 @@ function WorkspaceHeader(props: Readonly<WorkspaceHeaderProps>) {
       <PreferencesModal
         isOpen={isPreferencesModalOpen}
         setIsOpen={setIsPreferencesModalOpen}
-        initialVal={workspace.name}
+        initialWorkspaceName={workspace.name}
       />
       <div className="flex items-center justify-between px-4 h-[49px] gap-0.5">
         <DropdownMenu>
