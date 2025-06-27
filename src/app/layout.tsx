@@ -5,6 +5,7 @@ import Modals from "@/components/global/modals";
 import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
 import "./globals.css";
+import JotaiProvider from "@/components/jotai/jotai-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,9 +35,11 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <ConvexClientProvider>
-            <Toaster richColors />
-            {children}
-            <Modals />
+            <JotaiProvider>
+              <Toaster richColors />
+              {children}
+              <Modals />
+            </JotaiProvider>
           </ConvexClientProvider>
         </body>
       </html>
