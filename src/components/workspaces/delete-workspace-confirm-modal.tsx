@@ -40,6 +40,7 @@ function DeleteWorkspaceConfirmModal(
   });
 
   function handleDeleteSuccess() {
+    router.replace("/");
     console.log("successfully deleted workspace");
     toast("Successfully deleted workspace!", {
       description: workspaceName,
@@ -54,7 +55,6 @@ function DeleteWorkspaceConfirmModal(
   function handleDeleteSettled() {
     console.log("Finished deleting!");
     setIsOpen(false);
-    router.replace("/");
   }
 
   async function handleDelete() {

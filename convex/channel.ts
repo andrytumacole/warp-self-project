@@ -8,9 +8,12 @@ export const get = query({
     workspaceId: v.id("workspaces"),
   },
   handler: async (ctx, args) => {
-    const userId = await checkAuthorizedUser(ctx);
-
-    await checkAuthorizedUserRole(ctx, args.workspaceId, userId);
+    try {
+      const userId = await checkAuthorizedUser(ctx);
+      await checkAuthorizedUserRole(ctx, args.workspaceId, userId);
+    } catch {
+      return [];
+    }
 
     const channels = await ctx.db
       .query("channels")
