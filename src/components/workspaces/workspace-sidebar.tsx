@@ -2,6 +2,7 @@ import useGetCurrentMember from "@/app/api/use-get-current-membership-info";
 import useGetWorkspaceById from "@/app/api/use-get-workspace-by-id";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import { AlertTriangle, Loader } from "lucide-react";
+import WorkspaceHeader from "./workspace-header";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
@@ -28,7 +29,14 @@ function WorkspaceSidebar() {
     );
   }
 
-  return <div className="flex flex-col h-full">Add header here</div>;
+  return (
+    <div className="flex flex-col h-full">
+      <WorkspaceHeader
+        workspace={workspace}
+        isAdmin={membershipInfo.role === "admin"}
+      />
+    </div>
+  );
 }
 
 export default WorkspaceSidebar;
