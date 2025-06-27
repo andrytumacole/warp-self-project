@@ -48,7 +48,7 @@ function WorkspaceSection(props: Readonly<WorkspaceSectionProp>) {
           </Hint>
         )}
       </div>
-      {on && children}
+      {!on && children}
     </div>
   );
 }
