@@ -2,6 +2,12 @@
 
 import Toolbar from "@/components/workspaces/toolbar";
 import Sidebar from "@/components/workspaces/sidebar";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import WorkspaceSidebar from "@/components/workspaces/workspace-sidebar";
 
 export default function WorkspaceIdLayout({
   children,
@@ -14,7 +20,20 @@ export default function WorkspaceIdLayout({
       {/* offset by toolbar height */}
       <div className="flex h-[calc(100vh-2.5rem)]">
         <Sidebar />
-        {children}
+        <ResizablePanelGroup
+          direction="horizontal"
+          autoSaveId={"workspace-layout"}
+        >
+          <ResizablePanel
+            defaultSize={20}
+            minSize={11}
+            className="bg-slate-800 text-white"
+          >
+            <WorkspaceSidebar />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel minSize={20}>{children}</ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );
