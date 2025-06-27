@@ -5,7 +5,24 @@ import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 export const get = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("workspaces").collect();
+    const userId = await checkAuthorizedUser(ctx);
+    //check which workspaces the user is a member of
+    const filteredWorkspaces = await ctx.db
+      .query("members")
+      .withIndex("by_user_id")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .collect();
+
+    const myWorkspacesIds = filteredWorkspaces.map(
+      (workspace) => workspace.workspaceId
+    );
+
+    const myWorkspaces = [];
+    for (const workspaceId of myWorkspacesIds) {
+      const workspace = await ctx.db.get(workspaceId);
+      if (workspace) myWorkspaces.push(workspace);
+    }
+    return myWorkspaces;
   },
 });
 
@@ -21,6 +38,14 @@ export const create = mutation({
       name: args.name,
       userId,
       joinCode,
+    });
+
+    //when a user creates a workspace,
+    //that user should be added on the members as admin
+    await ctx.db.insert("members", {
+      userId: userId,
+      workspaceId: workspaceId,
+      role: "admin",
     });
 
     return workspaceId;
