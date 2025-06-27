@@ -43,7 +43,7 @@ function Switcher() {
       >
         <DropdownMenuItem
           onClick={() => router.push(`/workspace/${workspaceId}`)}
-          className="w-full cursor-pointer grid grid-cols-1 justify-start items-start capitalize gap-0 bg-gray-100/80 overflow-hidden"
+          className="w-full cursor-pointer grid grid-cols-1 justify-start items-start capitalize gap-0 bg-gray-100/80 overflow-hidden focus:bg-gray-300"
         >
           <p className="truncate whitespace-nowrap">{currentWorkspace?.name}</p>
           <span className="text-xs text-muted-foreground ">
@@ -53,14 +53,14 @@ function Switcher() {
         {otherWorkspaces?.map((workspace) => (
           <DropdownMenuItem
             key={workspace._id}
-            className="capitalize cursor-pointer bg-gray-100/80"
+            className="capitalize cursor-pointer bg-gray-100/80 focus:bg-gray-300"
             onClick={() => router.push(`/workspace/${workspace._id}`)}
           >
             <p className="truncate">{workspace.name}</p>
           </DropdownMenuItem>
         ))}
         <DropdownMenuItem
-          className="cursor-pointer bg-gray-100/80"
+          className="cursor-pointer bg-gray-100/80 focus:bg-gray-300"
           onClick={() => setIsModalOpen(true)}
         >
           <div className="size-9 relative overflow-hidden flex justify-center items-center">
