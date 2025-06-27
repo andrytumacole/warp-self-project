@@ -13,7 +13,7 @@ export const current = query({
 
     //get the member info of current user
     const member = await ctx.db
-      .query("members")
+      .query("membershipInfos")
       .withIndex("by_workspace_id_user_id", (q) =>
         q.eq("workspaceId", args.workspaceId).eq("userId", userId)
       )

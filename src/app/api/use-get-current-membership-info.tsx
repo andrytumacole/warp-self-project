@@ -6,13 +6,15 @@ interface UseGetCurrentMemberProps {
   workspaceId: Id<"workspaces">;
 }
 
-function useGetCurrentMember(props: Readonly<UseGetCurrentMemberProps>) {
+function useGetCurrentMembershipInfo(
+  props: Readonly<UseGetCurrentMemberProps>
+) {
   const { workspaceId } = props;
-  const membershipInfo = useQuery(api.members.current, {
+  const membershipInfo = useQuery(api.membership_info.current, {
     workspaceId: workspaceId,
   });
   const isLoading = membershipInfo === undefined;
   return { membershipInfo, isLoading };
 }
 
-export default useGetCurrentMember;
+export default useGetCurrentMembershipInfo;

@@ -18,7 +18,7 @@ export const get = query({
     const userId = await checkAuthorizedUser(ctx);
     //check which workspaces the user is a member of
     const filteredWorkspaces = await ctx.db
-      .query("members")
+      .query("membershipInfos")
       .withIndex("by_user_id", (q) => q.eq("userId", userId))
       .collect();
 
@@ -51,7 +51,7 @@ export const create = mutation({
 
     //when a user creates a workspace,
     //that user should be added on the members as admin
-    await ctx.db.insert("members", {
+    await ctx.db.insert("membershipInfos", {
       userId: userId,
       workspaceId: workspaceId,
       role: "admin",
@@ -68,7 +68,7 @@ export const getById = query({
 
     //query if the current user is a member of the args workspace
     const member = await ctx.db
-      .query("members")
+      .query("membershipInfos")
       .withIndex("by_workspace_id_user_id", (q) =>
         q.eq("workspaceId", args.id).eq("userId", userId)
       )

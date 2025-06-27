@@ -1,4 +1,4 @@
-import useGetCurrentMember from "@/app/api/use-get-current-member";
+import useGetCurrentMember from "@/app/api/use-get-current-membership-info";
 import useGetWorkspaceById from "@/app/api/use-get-workspace-by-id";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import { AlertTriangle, Loader } from "lucide-react";

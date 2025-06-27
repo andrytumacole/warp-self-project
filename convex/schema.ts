@@ -116,7 +116,7 @@ const authTables = {
     joinCode: v.string(),
   }),
 
-  members: defineTable({
+  membershipInfos: defineTable({
     userId: v.id("users"),
     workspaceId: v.id("workspaces"),
     role: v.union(v.literal("admin"), v.literal("member")),
