@@ -1,8 +1,9 @@
 import useGetCurrentMember from "@/app/api/use-get-current-membership-info";
 import useGetWorkspaceById from "@/app/api/use-get-workspace-by-id";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
-import { AlertTriangle, Loader } from "lucide-react";
+import { AlertTriangle, Loader, MessageSquareText } from "lucide-react";
 import WorkspaceHeader from "./workspace-header";
+import WorkspaceSidebarItem from "./workspace-sidebar-item";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
@@ -35,6 +36,13 @@ function WorkspaceSidebar() {
         workspace={workspace}
         isAdmin={membershipInfo.role === "admin"}
       />
+      <div className="flex flex-col px-2 mt-3">
+        <WorkspaceSidebarItem
+          label="threads"
+          icon={MessageSquareText}
+          id="threads"
+        />
+      </div>
     </div>
   );
 }
