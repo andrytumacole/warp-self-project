@@ -3,12 +3,14 @@ import useGetWorkspaceById from "@/app/api/use-get-workspace-by-id";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import {
   AlertTriangle,
+  HashIcon,
   Loader,
   MessageSquareText,
   SendHorizonal,
 } from "lucide-react";
 import WorkspaceHeader from "./workspace-header";
 import WorkspaceSidebarItem from "./workspace-sidebar-item";
+import useGetChannelsByWorkspaceId from "@/app/api/use-get-channels-by-workspace-id";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
@@ -17,6 +19,9 @@ function WorkspaceSidebar() {
   const { workspace, isLoading: isFetchingWorkspace } = useGetWorkspaceById({
     id: workspaceId,
   });
+
+  const { channels, isLoading: isFetchingChannels } =
+    useGetChannelsByWorkspaceId({ workspaceId: workspaceId });
 
   if (isFetchingMembershipInfo || isFetchingWorkspace) {
     return (
@@ -53,6 +58,16 @@ function WorkspaceSidebar() {
           icon={SendHorizonal}
           id="drafts"
         />
+        {channels?.map((channelItem) => {
+          return (
+            <WorkspaceSidebarItem
+              key={channelItem._id}
+              label={channelItem.name}
+              icon={HashIcon}
+              id={channelItem._id}
+            />
+          );
+        })}
       </div>
     </div>
   );
