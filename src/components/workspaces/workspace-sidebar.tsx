@@ -11,6 +11,7 @@ import {
 import WorkspaceHeader from "./workspace-header";
 import WorkspaceSidebarItem from "./workspace-sidebar-item";
 import useGetChannelsByWorkspaceId from "@/app/api/use-get-channels-by-workspace-id";
+import WorkspaceSection from "./workspace-section";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
@@ -58,6 +59,9 @@ function WorkspaceSidebar() {
           icon={SendHorizonal}
           id="drafts"
         />
+      </div>
+
+      <WorkspaceSection label="Channels" hint="New channel" onNew={() => {}}>
         {channels?.map((channelItem) => {
           return (
             <WorkspaceSidebarItem
@@ -68,7 +72,7 @@ function WorkspaceSidebar() {
             />
           );
         })}
-      </div>
+      </WorkspaceSection>
     </div>
   );
 }
