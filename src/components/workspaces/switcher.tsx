@@ -14,13 +14,13 @@ import { useRouter } from "next/navigation";
 
 function Switcher() {
   const router = useRouter();
-  const [_isModalOpen, setIsModalOpen] = useCreateWorkspaceModal();
-  const workspaceId = useGetWorkspaceId();
-  const { workspaces, isLoading: _isFetchingWorkspaces } = useGetWorkspaces();
+  const [_isModalOpen, setIsModalOpen] = useCreateWorkspaceModal(); //atom state
+  const workspaceId = useGetWorkspaceId(); //hook that fetches from params
+  const { workspaces, isLoading: _isFetchingWorkspaces } = useGetWorkspaces(); //hook that uses useQuery
   const { workspace: currentWorkspace, isLoading: isFetchingWorkspace } =
     useGetWorkspaceById({
       id: workspaceId,
-    });
+    }); //hook that uses useQuery
 
   const otherWorkspaces = workspaces?.filter(
     (workspace) => workspace?._id !== workspaceId
