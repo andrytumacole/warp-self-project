@@ -1,7 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { MutationCtx, query, QueryCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
-import { Doc, Id } from "./_generated/dataModel";
+import { Id } from "./_generated/dataModel";
 
 export const current = query({
   args: { workspaceId: v.id("workspaces") },
