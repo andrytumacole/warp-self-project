@@ -130,6 +130,18 @@ export const remove = mutation({
       await ctx.db.delete(memInfo._id);
     }
 
+    const [channels] = await Promise.all([
+      ctx.db
+        .query("channels")
+        .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+        .collect(),
+    ]);
+
+    //delete each associated channel
+    for (const channel of channels) {
+      await ctx.db.delete(channel._id);
+    }
+
     //delete the workspace doc
     await ctx.db.delete(args.id);
 
