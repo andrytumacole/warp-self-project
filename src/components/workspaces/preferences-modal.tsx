@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { TrashIcon } from "lucide-react";
 import EditWorkspaceModal from "./edit-workspace-modal";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import DeleteWorkspaceConfirmModal from "./delete-workspace-confirm-modal";
