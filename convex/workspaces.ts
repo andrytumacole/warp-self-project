@@ -55,7 +55,22 @@ export const create = mutation({
 export const getById = query({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
-    await checkAuthorizedUser(ctx);
+    const userId = await checkAuthorizedUser(ctx);
+
+    //query if the current user is a member of the args workspace
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id")
+      .filter(
+        (q) =>
+          q.eq(q.field("workspaceId"), args.id) &&
+          q.eq(q.field("userId"), userId)
+      )
+      .unique();
+
+    //user is not a member of the request workspace by id
+    if (!member) return null;
+
     const workspace = await ctx.db.get(args.id);
     return workspace;
   },
