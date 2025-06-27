@@ -12,6 +12,8 @@ import WorkspaceHeader from "./workspace-header";
 import WorkspaceSidebarItem from "./workspace-sidebar-item";
 import useGetChannelsByWorkspaceId from "@/app/api/use-get-channels-by-workspace-id";
 import WorkspaceSection from "./workspace-section";
+import useGetMembersByWorkspaceId from "@/app/api/use-get-members-by-workspace-id";
+import WorkspaceSidebarUserItem from "./workspace-sidebar-user-item";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
@@ -23,6 +25,10 @@ function WorkspaceSidebar() {
 
   const { channels, isLoading: isFetchingChannels } =
     useGetChannelsByWorkspaceId({ workspaceId: workspaceId });
+
+  const { members, isLoading: isFetchingMembers } = useGetMembersByWorkspaceId({
+    workspaceId: workspaceId,
+  });
 
   if (isFetchingMembershipInfo || isFetchingWorkspace) {
     return (
@@ -69,6 +75,23 @@ function WorkspaceSidebar() {
               label={channelItem.name}
               icon={HashIcon}
               id={channelItem._id}
+            />
+          );
+        })}
+      </WorkspaceSection>
+
+      <WorkspaceSection
+        label="Direct messages"
+        hint="New direct message"
+        onNew={() => {}}
+      >
+        {members?.map((memberItem) => {
+          return (
+            <WorkspaceSidebarUserItem
+              key={memberItem._id}
+              label={memberItem.user.name ?? "Anonymous"}
+              image={memberItem.user.image}
+              id={memberItem._id}
             />
           );
         })}

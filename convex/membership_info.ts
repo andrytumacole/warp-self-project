@@ -55,6 +55,7 @@ export const get = query({
     }
 
     return members;
+    return [];
   },
 });
 
