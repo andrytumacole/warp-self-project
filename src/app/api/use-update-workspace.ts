@@ -8,14 +8,14 @@ type Options = {
   onSettled?: () => void;
 };
 function useUpdateWorkspace(options?: Options) {
-  const { mutateAsync, isPending } = useMutation({
+  const { mutateAsync, isPending, error } = useMutation({
     mutationFn: useConvexMutation(api.workspaces.update),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
     onSettled: options?.onSettled,
   });
 
-  return { mutateAsync, isPending };
+  return { mutateAsync, isPending, error };
 }
 
 export default useUpdateWorkspace;

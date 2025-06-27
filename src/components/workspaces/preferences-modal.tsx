@@ -8,6 +8,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TrashIcon } from "lucide-react";
+import { toast } from "sonner";
+import useUpdateWorkspace from "@/app/api/use-update-workspace";
 
 interface PreferencesModalProp {
   isOpen: boolean;
@@ -18,6 +20,33 @@ interface PreferencesModalProp {
 function PreferencesModal(props: Readonly<PreferencesModalProp>) {
   const { isOpen, setIsOpen, initialVal } = props;
   const [value, setValue] = useState(initialVal);
+  const {
+    mutateAsync: update,
+    isPending: isUpdatingWorkspace,
+    error,
+  } = useUpdateWorkspace({
+    onSuccess: handleSuccess,
+    onError: handleError,
+    onSettled: handleSettled,
+  });
+
+  function handleSuccess() {
+    console.log("successfully created workspace");
+    toast("Successfully updated workspace!", {
+      description: initialVal,
+    });
+  }
+
+  function handleError() {
+    console.log("Something went wrong in updating the workspace");
+    console.log("error: " + error);
+  }
+
+  function handleSettled() {
+    console.log("Finished updating!");
+    setIsOpen(false);
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="p-0 bg-gray-100 overflow-hidden [&>button]:hidden">
