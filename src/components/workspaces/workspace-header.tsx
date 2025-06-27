@@ -9,13 +9,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { ChevronDown, SquarePen } from "lucide-react";
+import Hint from "../global/tooltip";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
   isAdmin: boolean;
 }
 
-function WorkspaceHeader(props: WorkspaceHeaderProps) {
+function WorkspaceHeader(props: Readonly<WorkspaceHeaderProps>) {
   const { workspace, isAdmin } = props;
   return (
     <div className="flex items-center justify-between px-4 h-[49px] gap-0.5">
@@ -35,7 +36,7 @@ function WorkspaceHeader(props: WorkspaceHeaderProps) {
           align="start"
           className="w-64 space-y-1"
         >
-          <DropdownMenuItem className="cursor-pointer capitalize bg-gray-100/80">
+          <DropdownMenuItem className="cursor-pointer capitalize bg-gray-100/80 focus:bg-gray-300">
             <div className="flex justify-center items-center size-9 relative overflow-hidden text-black border-black border bg-white font-semibold text-lg rounded-md mr-2">
               {workspace.name.charAt(0).toUpperCase()}
             </div>
@@ -48,13 +49,13 @@ function WorkspaceHeader(props: WorkspaceHeaderProps) {
           {isAdmin && (
             <>
               <DropdownMenuItem
-                className="cursor-pointer bg-slate-100/80 py-2"
+                className="cursor-pointer bg-slate-100/80 py-2 focus:bg-gray-300"
                 onClick={() => {}}
               >
                 Invite people to {workspace.name}
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="cursor-pointer bg-slate-100/80 py-2"
+                className="cursor-pointer bg-slate-100/80 py-2 focus:bg-gray-300"
                 onClick={() => {}}
               >
                 Preferences
@@ -63,10 +64,13 @@ function WorkspaceHeader(props: WorkspaceHeaderProps) {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+
       <div className="flex items-center gap-0.5 align-middle justify-center">
-        <Button variant={"transparent"} size={"iconSm"}>
-          <SquarePen className="size-4" />
-        </Button>
+        <Hint label="New message" side="bottom">
+          <Button variant={"transparent"} size={"iconSm"}>
+            <SquarePen className="size-4" />
+          </Button>
+        </Hint>
       </div>
     </div>
   );
