@@ -1,6 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 function generateRandomCode() {
   const digits = "0123456789";
@@ -94,19 +95,9 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await checkAuthorizedUser(ctx);
-    //query if the current user is a member of the args workspace
-    const membershipInfo = await ctx.db
-      .query("membershipInfos")
-      .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.id).eq("userId", userId)
-      )
-      .unique();
 
-    //user is not a member of the request workspace by id
-    if (!membershipInfo || membershipInfo.role !== "admin")
-      throw new ConvexError({
-        message: "[client][workspace preferences]: Unauthorized user",
-      });
+    //check if user is in the workspace or an admin
+    await checkAuthorizedUserRole(ctx, args.id, userId);
 
     await ctx.db.patch(args.id, {
       name: args.name,
@@ -122,19 +113,9 @@ export const remove = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await checkAuthorizedUser(ctx);
-    //query if the current user is a member of the args workspace
-    const membershipInfo = await ctx.db
-      .query("membershipInfos")
-      .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.id).eq("userId", userId)
-      )
-      .unique();
 
-    //user is not a member of the request workspace by id
-    if (!membershipInfo || membershipInfo.role !== "admin")
-      throw new ConvexError({
-        message: "[client][workspace preferences]: Unauthorized user",
-      });
+    //check if user is in the workspace or an admin
+    await checkAuthorizedUserRole(ctx, args.id, userId);
 
     //get all membership info related to the workspace to be deleted
     const [membershipInfos] = await Promise.all([
@@ -164,4 +145,24 @@ async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
     });
   }
   return userId;
+}
+
+async function checkAuthorizedUserRole(
+  ctx: MutationCtx | QueryCtx,
+  workspaceId: Id<"workspaces">,
+  userId: Id<"users">
+) {
+  //query if the current user is a member of the args workspace
+  const membershipInfo = await ctx.db
+    .query("membershipInfos")
+    .withIndex("by_workspace_id_user_id", (q) =>
+      q.eq("workspaceId", workspaceId).eq("userId", userId)
+    )
+    .unique();
+
+  //user is not a member of the request workspace by id
+  if (!membershipInfo || membershipInfo.role !== "admin")
+    throw new ConvexError({
+      message: "[client][workspace preferences]: Unauthorized user",
+    });
 }
