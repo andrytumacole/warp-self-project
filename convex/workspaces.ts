@@ -19,8 +19,7 @@ export const get = query({
     //check which workspaces the user is a member of
     const filteredWorkspaces = await ctx.db
       .query("members")
-      .withIndex("by_user_id")
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
       .collect();
 
     const myWorkspacesIds = filteredWorkspaces.map(
@@ -70,11 +69,8 @@ export const getById = query({
     //query if the current user is a member of the args workspace
     const member = await ctx.db
       .query("members")
-      .withIndex("by_workspace_id_user_id")
-      .filter(
-        (q) =>
-          q.eq(q.field("workspaceId"), args.id) &&
-          q.eq(q.field("userId"), userId)
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.id).eq("userId", userId)
       )
       .unique();
 

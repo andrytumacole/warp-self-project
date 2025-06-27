@@ -123,7 +123,7 @@ const authTables = {
   })
     .index("by_user_id", ["userId"])
     .index("by_workspace_id", ["workspaceId"])
-    .index("by_workspace_id_user_id", ["userId", "workspaceId"]),
+    .index("by_workspace_id_user_id", ["workspaceId", "userId"]),
 };
 
 export default defineSchema({
