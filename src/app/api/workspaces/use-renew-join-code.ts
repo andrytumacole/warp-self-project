@@ -1,0 +1,20 @@
+import { useMutation } from "@tanstack/react-query";
+import { api } from "../../../../convex/_generated/api";
+import { useConvexMutation } from "@convex-dev/react-query";
+
+type Options = {
+  onSuccess?: () => void;
+  onError?: () => void;
+  onSettled?: () => void;
+};
+
+export const useRenewNewJoinCode = (options?: Options) => {
+  const { isPending, data, error, mutateAsync } = useMutation({
+    mutationFn: useConvexMutation(api.workspaces.renewJoinCode),
+    onSuccess: options?.onSuccess,
+    onError: options?.onError,
+    onSettled: options?.onSettled,
+  });
+
+  return { isPending, data, error, mutateAsync };
+};
