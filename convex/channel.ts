@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { MutationCtx, query, QueryCtx } from "./_generated/server";
+import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 
@@ -23,6 +23,24 @@ export const get = query({
       .collect();
 
     return channels;
+  },
+});
+
+export const create = mutation({
+  args: {
+    name: v.string(),
+    workspaceId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+    await checkAuthorizedUserRole(ctx, args.workspaceId, userId);
+
+    const channelId = await ctx.db.insert("channels", {
+      name: args.name,
+      workspaceId: args.workspaceId,
+    });
+
+    return channelId;
   },
 });
 
