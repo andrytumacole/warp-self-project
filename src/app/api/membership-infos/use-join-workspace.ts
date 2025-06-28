@@ -10,7 +10,7 @@ type Options = {
 
 export const useJoinWorkspace = (options?: Options) => {
   const { isPending, data, error, mutateAsync } = useMutation({
-    mutationFn: useConvexMutation(api.workspaces.create),
+    mutationFn: useConvexMutation(api.membership_info.join),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
     onSettled: options?.onSettled,
