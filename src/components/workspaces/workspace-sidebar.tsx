@@ -14,21 +14,26 @@ import useGetChannelsByWorkspaceId from "@/app/api/use-get-channels-by-workspace
 import WorkspaceSection from "./workspace-section";
 import useGetMembersByWorkspaceId from "@/app/api/use-get-members-by-workspace-id";
 import WorkspaceSidebarUserItem from "./workspace-sidebar-user-item";
+import { useCreateChannelModal } from "@/app/atom-states/use-create-channel-modal";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
+  const [_isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
+    useCreateChannelModal();
   const { membershipInfo, isLoading: isFetchingMembershipInfo } =
     useGetCurrentMember({ workspaceId: workspaceId });
   const { workspace, isLoading: isFetchingWorkspace } = useGetWorkspaceById({
     id: workspaceId,
   });
 
-  const { channels, isLoading: isFetchingChannels } =
+  const { channels, isLoading: _isFetchingChannels } =
     useGetChannelsByWorkspaceId({ workspaceId: workspaceId });
 
-  const { members, isLoading: isFetchingMembers } = useGetMembersByWorkspaceId({
-    workspaceId: workspaceId,
-  });
+  const { members, isLoading: _isFetchingMembers } = useGetMembersByWorkspaceId(
+    {
+      workspaceId: workspaceId,
+    }
+  );
 
   if (isFetchingMembershipInfo || isFetchingWorkspace) {
     return (
@@ -67,7 +72,11 @@ function WorkspaceSidebar() {
         />
       </div>
 
-      <WorkspaceSection label="Channels" hint="New channel" onNew={() => {}}>
+      <WorkspaceSection
+        label="Channels"
+        hint="New channel"
+        onNew={() => setIsCreateChannelModalOpen(true)}
+      >
         {channels?.map((channelItem) => {
           return (
             <WorkspaceSidebarItem
