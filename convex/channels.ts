@@ -35,8 +35,11 @@ export const create = mutation({
     const userId = await checkAuthorizedUser(ctx);
     await checkAuthorizedUserRole(ctx, args.workspaceId, userId);
 
+    //in cases where they can bypass the autocorrect in the frontend
+    const parsedValue = args.name.replace(/\s+/g, "-").toLowerCase();
+
     const channelId = await ctx.db.insert("channels", {
-      name: args.name,
+      name: parsedValue,
       workspaceId: args.workspaceId,
     });
 
