@@ -13,18 +13,13 @@ export const current = query({
     }
 
     //get the member info of current user
-    const member = await ctx.db
-      .query("membershipInfos")
-      .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
-      )
-      .unique();
+    const membershipInfo = await checkAuthorizedUserRole(
+      ctx,
+      args.workspaceId,
+      userId
+    );
 
-    if (!member) {
-      return null;
-    }
-
-    return member;
+    return membershipInfo;
   },
 });
 
