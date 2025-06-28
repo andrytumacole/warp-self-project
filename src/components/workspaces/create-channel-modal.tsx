@@ -15,7 +15,7 @@ import { useCreateChannel } from "@/app/api/use-create-channel";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 
 function CreateChannelModal() {
-  const router = useRouter();
+  //   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useCreateChannelModal();
   const [channelInfo, setChannelInfo] = useState("");
   const { isPending, error, mutateAsync } = useCreateChannel({
@@ -37,18 +37,19 @@ function CreateChannelModal() {
       workspaceId: workspaceId,
     });
     console.log(channelId);
-    router.replace(`/workspace/${workspaceId}`);
+    //add routing to channel url
+    // router.replace(`/workspace/${workspaceId}`);
   }
 
   function handleSuccess() {
-    console.log("successfully created workspace");
-    toast("Successfully created workspace!", {
+    console.log("successfully created channel");
+    toast("Successfully created channel!", {
       description: channelInfo,
     });
   }
 
   function handleError() {
-    console.log("Something went wrong in creating the workspace");
+    console.log("Something went wrong in creating the channel");
     console.log("error: " + error);
   }
 
