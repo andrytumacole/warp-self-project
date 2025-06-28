@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CreateWorkspaceModal from "../workspaces/create-workspace-modal";
-import CreateChannelModal from "../workspaces/create-channel-modal";
+import CreateWorkspaceModal from "../workspaces/workspace-modals/create-workspace-modal";
+import CreateChannelModal from "../workspaces/workspace-modals/create-channel-modal";
 
 function Modals() {
   const [isMounted, setIsMounted] = useState(false);

@@ -6,8 +6,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useCreateChannelModal } from "@/app/atom-states/use-create-channel-modal";
 import { useRouter } from "next/navigation";

@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { ChevronDown, SquarePen } from "lucide-react";
 import Hint from "../global/tooltip";
 import { useState } from "react";
-import PreferencesModal from "./preferences-modal";
+import PreferencesModal from "./workspace-modals/preferences-modal";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
