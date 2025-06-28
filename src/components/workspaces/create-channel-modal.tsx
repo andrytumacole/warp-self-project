@@ -1,13 +1,14 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useCreateChannelModal } from "@/app/atom-states/use-create-channel-modal";
 import { useRouter } from "next/navigation";
 import { useCreateChannel } from "@/app/api/use-create-channel";
@@ -25,6 +26,7 @@ function CreateChannelModal() {
   const workspaceId = useGetWorkspaceId();
 
   function handleClose() {
+    setChannelInfo("");
     setIsModalOpen(false);
   }
 
@@ -56,11 +58,17 @@ function CreateChannelModal() {
     setChannelInfo("");
   }
 
+  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const parsedValue = e.target.value.replace(/\s+/g, "-").toLowerCase();
+    setChannelInfo(parsedValue);
+  }
+
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="rounded-lg [&>button]:hidden">
         <DialogHeader>
           <DialogTitle>Add a channel</DialogTitle>
+          <DialogDescription>{`Note: whitespace is not allowed and will be autoreplaced with "-"`}</DialogDescription>
         </DialogHeader>
         <form className="space-y-2.5" onSubmit={handleCreate}>
           <Input
@@ -69,8 +77,8 @@ function CreateChannelModal() {
             autoFocus
             minLength={3}
             disabled={isPending}
-            onChange={(e) => setChannelInfo(e.target.value)}
-            placeholder={`Workspace name e.g. "Work", "Personal", "Home"`}
+            onChange={handleInputChange}
+            placeholder={`Channel name e.g. "new-channel", "admin", "welcome"`}
           />
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending}>
