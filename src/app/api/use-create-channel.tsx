@@ -10,7 +10,7 @@ type Options = {
 
 export const useCreateChannel = (options?: Options) => {
   const { isPending, data, error, mutateAsync } = useMutation({
-    mutationFn: useConvexMutation(api.channel.create),
+    mutationFn: useConvexMutation(api.channels.create),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
     onSettled: options?.onSettled,

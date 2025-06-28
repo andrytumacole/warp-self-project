@@ -10,7 +10,7 @@ function useGetChannelsByWorkspaceId(
   props: Readonly<UseGetChannelsByWorkspaceIdProp>
 ) {
   const { workspaceId } = props;
-  const channels = useQuery(api.channel.get, { workspaceId: workspaceId });
+  const channels = useQuery(api.channels.get, { workspaceId: workspaceId });
   const isLoading = channels === undefined;
   return { channels, isLoading };
 }
