@@ -12,6 +12,7 @@ import Link from "next/link";
 import VerificationInput from "react-verification-input";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect, useMemo } from "react";
 
 function JoinPage() {
   const router = useRouter();
@@ -20,6 +21,11 @@ function JoinPage() {
     useGetWorkspaceInfoById({
       id: workspaceId,
     });
+
+  const isMember = useMemo(() => {
+    return workspaceInfo?.isMember;
+  }, [workspaceInfo?.isMember]);
+
   const {
     data: _data,
     isPending,
@@ -57,6 +63,13 @@ function JoinPage() {
       workspaceId: workspaceId,
     });
   }
+
+  useEffect(() => {
+    //reroute the user if already a member
+    if (isMember) {
+      router.push(`/workspace/${workspaceId}`);
+    }
+  }, [isMember, router, workspaceId]);
 
   return isFetchingWorkspaceInfo ? (
     <div className="h-full flex items-center justify-center">
