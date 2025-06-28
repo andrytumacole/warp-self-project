@@ -50,6 +50,7 @@ function CreateChannelModal() {
   function handleError() {
     console.log("Something went wrong in creating the channel");
     console.log("error: " + error);
+    toast.error("Something went wrong in creating the channel");
   }
 
   function handleSettled() {
