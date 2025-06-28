@@ -1,4 +1,4 @@
-import useUpdateWorkspace from "@/app/api/use-update-workspace";
+import useUpdateWorkspace from "@/app/api/workspaces/use-update-workspace";
 
 import {
   Dialog,

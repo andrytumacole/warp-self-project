@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { FormEvent, useState } from "react";
-import { useCreateWorkspace } from "@/app/api/use-create-workspace";
+import { useCreateWorkspace } from "@/app/api/workspaces/use-create-workspace";
 import { useRouter } from "next/navigation";
 
 function CreateWorkspaceModal() {

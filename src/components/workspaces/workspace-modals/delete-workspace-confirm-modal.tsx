@@ -1,4 +1,4 @@
-import useRemoveWorkspace from "@/app/api/use-delete-workspace";
+import useRemoveWorkspace from "@/app/api/workspaces/use-delete-workspace";
 
 import {
   Dialog,

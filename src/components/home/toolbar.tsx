@@ -1,7 +1,7 @@
 import { Info, Search } from "lucide-react";
 import { Button } from "../ui/button";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
-import useGetWorkspaceById from "@/app/api/use-get-workspace-by-id";
+import useGetWorkspaceById from "@/app/api/workspaces/use-get-workspace-by-id";
 
 function Toolbar() {
   const workspaceId = useGetWorkspaceId();
