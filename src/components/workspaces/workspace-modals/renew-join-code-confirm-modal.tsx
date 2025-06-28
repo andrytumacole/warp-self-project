@@ -1,4 +1,4 @@
-import { useRenewNewJoinCode } from "@/app/api/workspaces/use-renew-join-code";
+import { useRenewNewJoinCode } from "@/api/workspaces/use-renew-join-code";
 
 import {
   Dialog,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Button } from "../../ui/button";
-import { Id } from "../../../../convex/_generated/dataModel";
+import { Id } from "../../../convex/_generated/dataModel";
 import { RefreshCcw } from "lucide-react";
 
 interface RenewJoinCodeConfirmModallProp {

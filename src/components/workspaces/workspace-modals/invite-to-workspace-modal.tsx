@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "../../ui/button";
 import { CopyIcon } from "lucide-react";
-import { Id } from "../../../../convex/_generated/dataModel";
+import { Id } from "../../../convex/_generated/dataModel";
 import RenewJoinCodeConfirmModal from "./renew-join-code-confirm-modal";
 import { useState } from "react";
 

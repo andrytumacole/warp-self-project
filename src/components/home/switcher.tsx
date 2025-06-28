@@ -5,9 +5,9 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { useCreateWorkspaceModal } from "@/app/atom-states/use-create-workspace-modal";
-import useGetWorkspaces from "@/app/api/workspaces/use-get-workspaces";
-import useGetWorkspaceById from "@/app/api/workspaces/use-get-workspace-by-id";
+import { useCreateWorkspaceModal } from "@/atom-states/use-create-workspace-modal";
+import useGetWorkspaces from "@/api/workspaces/use-get-workspaces";
+import useGetWorkspaceById from "@/api/workspaces/use-get-workspace-by-id";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import { Loader, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";

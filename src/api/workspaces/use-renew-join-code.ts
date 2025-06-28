@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { api } from "../../../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { useConvexMutation } from "@convex-dev/react-query";
 
 type Options = {
@@ -8,9 +8,9 @@ type Options = {
   onSettled?: () => void;
 };
 
-export const useJoinWorkspace = (options?: Options) => {
+export const useRenewNewJoinCode = (options?: Options) => {
   const { isPending, data, error, mutateAsync } = useMutation({
-    mutationFn: useConvexMutation(api.membership_info.join),
+    mutationFn: useConvexMutation(api.workspaces.renewJoinCode),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
     onSettled: options?.onSettled,

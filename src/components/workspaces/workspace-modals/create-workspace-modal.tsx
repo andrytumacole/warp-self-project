@@ -1,6 +1,6 @@
 "use client";
 
-import { useCreateWorkspaceModal } from "@/app/atom-states/use-create-workspace-modal";
+import { useCreateWorkspaceModal } from "@/atom-states/use-create-workspace-modal";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { FormEvent, useState } from "react";
-import { useCreateWorkspace } from "@/app/api/workspaces/use-create-workspace";
+import { useCreateWorkspace } from "@/api/workspaces/use-create-workspace";
 import { useRouter } from "next/navigation";
 
 function CreateWorkspaceModal() {

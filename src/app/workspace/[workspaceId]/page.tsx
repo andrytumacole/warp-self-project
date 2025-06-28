@@ -1,6 +1,6 @@
 "use client";
 
-import useGetWorkspaceById from "@/app/api/workspaces/use-get-workspace-by-id";
+import useGetWorkspaceById from "@/api/workspaces/use-get-workspace-by-id";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 
 function WorkspaceIdPage() {

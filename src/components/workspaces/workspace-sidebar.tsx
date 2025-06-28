@@ -1,5 +1,5 @@
-import useGetCurrentMember from "@/app/api/membership-infos/use-get-current-membership-info";
-import useGetWorkspaceById from "@/app/api/workspaces/use-get-workspace-by-id";
+import useGetCurrentMember from "@/api/membership-infos/use-get-current-membership-info";
+import useGetWorkspaceById from "@/api/workspaces/use-get-workspace-by-id";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import {
   AlertTriangle,
@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 import WorkspaceHeader from "./workspace-header";
 import WorkspaceSidebarItem from "./workspace-sidebar-item";
-import useGetChannelsByWorkspaceId from "@/app/api/channels/use-get-channels-by-workspace-id";
+import useGetChannelsByWorkspaceId from "@/api/channels/use-get-channels-by-workspace-id";
 import WorkspaceSection from "./workspace-section";
-import useGetMembersByWorkspaceId from "@/app/api/membership-infos/use-get-members-by-workspace-id";
+import useGetMembersByWorkspaceId from "@/api/membership-infos/use-get-members-by-workspace-id";
 import WorkspaceSidebarUserItem from "./workspace-sidebar-user-item";
-import { useCreateChannelModal } from "@/app/atom-states/use-create-channel-modal";
+import { useCreateChannelModal } from "@/atom-states/use-create-channel-modal";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();

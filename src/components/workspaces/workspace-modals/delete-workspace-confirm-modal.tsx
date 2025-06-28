@@ -1,4 +1,4 @@
-import useRemoveWorkspace from "@/app/api/workspaces/use-delete-workspace";
+import useRemoveWorkspace from "@/api/workspaces/use-delete-workspace";
 
 import {
   Dialog,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Button } from "../../ui/button";
-import { Id } from "../../../../convex/_generated/dataModel";
+import { Id } from "../../../convex/_generated/dataModel";
 import { TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
