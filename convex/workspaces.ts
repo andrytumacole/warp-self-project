@@ -109,21 +109,21 @@ export const update = mutation({
 
 export const renewJoinCode = mutation({
   args: {
-    id: v.id("workspaces"),
+    workspaceId: v.id("workspaces"),
   },
   handler: async (ctx, args) => {
     const userId = await checkAuthorizedUser(ctx);
 
     //check if user is in the workspace or an admin
-    await checkAuthorizedUserRole(ctx, args.id, userId);
+    await checkAuthorizedUserRole(ctx, args.workspaceId, userId);
 
     const joinCode = generateRandomCode();
 
-    await ctx.db.patch(args.id, {
+    await ctx.db.patch(args.workspaceId, {
       joinCode: joinCode,
     });
 
-    return { workspaceId: args.id, joinCode };
+    return { workspaceId: args.workspaceId, joinCode };
   },
 });
 
