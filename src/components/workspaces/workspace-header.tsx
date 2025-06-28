@@ -12,7 +12,7 @@ import { ChevronDown, SquarePen } from "lucide-react";
 import Hint from "../global/tooltip";
 import { useState } from "react";
 import PreferencesModal from "./workspace-modals/preferences-modal";
-import InviteToWorkspaceModal from "./workspace-modals/InviteToWorkspaceModal";
+import InviteToWorkspaceModal from "./workspace-modals/invite-to-workspace-modal";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
