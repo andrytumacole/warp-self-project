@@ -15,9 +15,11 @@ import WorkspaceSection from "./workspace-section";
 import useGetMembersByWorkspaceId from "@/api/membership-infos/use-get-members-by-workspace-id";
 import WorkspaceSidebarUserItem from "./workspace-sidebar-user-item";
 import { useCreateChannelModal } from "@/atom-states/use-create-channel-modal";
+import useGetChannelId from "@/hooks/use-get-channel-id";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
+  const channelId = useGetChannelId();
   const [_isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
     useCreateChannelModal();
   const { membershipInfo, isLoading: isFetchingMembershipInfo } =
@@ -88,6 +90,7 @@ function WorkspaceSidebar() {
               label={channelItem.name}
               icon={HashIcon}
               id={channelItem._id}
+              variant={channelId === channelItem._id ? "active" : "default"}
             />
           );
         })}

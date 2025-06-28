@@ -25,7 +25,7 @@ function WorkspaceSection(props: Readonly<WorkspaceSectionProp>) {
           onClick={toggle}
         >
           <FaCaretDown
-            className={cn("size-4 transition-transform", on && "-rotate-90")}
+            className={cn("size-4 transition-transform", !on && "-rotate-90")}
           />
         </Button>
         <Button
@@ -48,7 +48,7 @@ function WorkspaceSection(props: Readonly<WorkspaceSectionProp>) {
           </Hint>
         )}
       </div>
-      {!on && children}
+      {on && children}
     </div>
   );
 }
