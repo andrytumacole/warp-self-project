@@ -3,9 +3,11 @@
 import useGetChannelsByWorkspaceId from "@/api/channels/use-get-channels-by-workspace-id";
 import { useCreateChannelModal } from "@/atom-states/use-create-channel-modal";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
-import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
+import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
+
+import { Loader, TriangleAlert } from "lucide-react";
 
 function WorkspaceIdPage() {
   const router = useRouter();
@@ -16,16 +18,25 @@ function WorkspaceIdPage() {
   const { channels, isLoading: isFetchingChannels } =
     useGetChannelsByWorkspaceId({ workspaceId: workspaceId });
 
+  const {
+    membershipInfo: userMembershipInfo,
+    isLoading: isFetchingMembershipInfo,
+  } = useGetCurrentMembershipInfo({ workspaceId: workspaceId });
+
   const firstChannelId = useMemo(() => {
     return channels?.[0]?._id;
   }, [channels]);
 
+  const isAdmin = useMemo(() => {
+    return userMembershipInfo?.role === "admin";
+  }, [userMembershipInfo?.role]);
+
   useEffect(() => {
-    if (isFetchingChannels) return;
+    if (isFetchingChannels || isFetchingMembershipInfo) return;
 
     if (firstChannelId) {
       router.push(`/workspace/${workspaceId}/channel/${firstChannelId}`);
-    } else if (!isCreateChannelModalOpen) {
+    } else if (!isCreateChannelModalOpen && isAdmin) {
       setIsCreateChannelModalOpen(true);
     }
   }, [
@@ -35,9 +46,18 @@ function WorkspaceIdPage() {
     setIsCreateChannelModalOpen,
     router,
     workspaceId,
+    isFetchingMembershipInfo,
+    isAdmin,
   ]);
 
-  return (
+  return !isAdmin ? (
+    <div className="h-full flex items-center justify-center flex-col gap-2">
+      <TriangleAlert />
+      <span className="text-sm text-muted-foreground">
+        There are no channels here
+      </span>
+    </div>
+  ) : (
     <div className="h-full flex items-center justify-center flex-col gap-2">
       <Loader className="animate-spin size-6 text-muted-foreground" />
       <span className="text-sm text-muted-foreground">

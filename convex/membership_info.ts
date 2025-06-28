@@ -126,4 +126,6 @@ async function checkAuthorizedUserRole(
     throw new ConvexError({
       message: "[client][workspace preferences]: Unauthorized user",
     });
+
+  return membershipInfo;
 }
