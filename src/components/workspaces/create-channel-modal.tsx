@@ -10,16 +10,19 @@ import { Button } from "../ui/button";
 import { FormEvent, useState } from "react";
 import { useCreateChannelModal } from "@/app/atom-states/use-create-channel-modal";
 import { useRouter } from "next/navigation";
+import { useCreateChannel } from "@/app/api/use-create-channel";
+import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 
 function CreateChannelModal() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useCreateChannelModal();
   const [channelInfo, setChannelInfo] = useState("");
-  //   const { isPending, error, mutateAsync } = useCreateWorkspace({
-  //     onSuccess: handleSuccess,
-  //     onError: handleError,
-  //     onSettled: handleSettled,
-  //   });
+  const { isPending, error, mutateAsync } = useCreateChannel({
+    onSuccess: handleSuccess,
+    onError: handleError,
+    onSettled: handleSettled,
+  });
+  const workspaceId = useGetWorkspaceId();
 
   function handleClose() {
     setIsModalOpen(false);
@@ -27,10 +30,11 @@ function CreateChannelModal() {
 
   async function handleCreate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const workspaceId = await mutateAsync({
+    const channelId = await mutateAsync({
       name: channelInfo,
+      workspaceId: workspaceId,
     });
-    console.log(workspaceId);
+    console.log(channelId);
     router.replace(`/workspace/${workspaceId}`);
   }
 
