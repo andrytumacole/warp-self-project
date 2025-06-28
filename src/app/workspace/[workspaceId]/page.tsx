@@ -3,7 +3,7 @@
 import useGetChannelsByWorkspaceId from "@/api/channels/use-get-channels-by-workspace-id";
 import { useCreateChannelModal } from "@/atom-states/use-create-channel-modal";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
-import { Loader, TriangleAlert } from "lucide-react";
+import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
