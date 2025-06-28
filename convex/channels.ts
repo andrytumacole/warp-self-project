@@ -33,7 +33,19 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await checkAuthorizedUser(ctx);
-    await checkAuthorizedUserRole(ctx, args.workspaceId, userId);
+    const membershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    //user is not a member and not an admin of the request workspace by id
+    if (!membershipInfo || membershipInfo.role !== "admin") {
+      throw new ConvexError({
+        message: "[client][workspace preferences]: Unauthorized user",
+      });
+    }
 
     //in cases where they can bypass the autocorrect in the frontend
     const parsedValue = args.name.replace(/\s+/g, "-").toLowerCase();
