@@ -127,7 +127,7 @@ async function checkAuthorizedUserRole(
     .unique();
 
   //user is not a member of the request workspace by id
-  if (!membershipInfo || membershipInfo.role !== "admin")
+  if (!membershipInfo)
     throw new ConvexError({
       message: "[client][workspace preferences]: Unauthorized user",
     });
