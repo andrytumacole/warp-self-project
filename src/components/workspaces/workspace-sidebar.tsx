@@ -75,7 +75,11 @@ function WorkspaceSidebar() {
       <WorkspaceSection
         label="Channels"
         hint="New channel"
-        onNew={() => setIsCreateChannelModalOpen(true)}
+        onNew={
+          membershipInfo.role === "admin"
+            ? () => setIsCreateChannelModalOpen(true)
+            : undefined
+        } //non admin members cannot add channel
       >
         {channels?.map((channelItem) => {
           return (
