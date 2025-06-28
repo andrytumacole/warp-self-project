@@ -30,6 +30,8 @@ function WorkspaceHeader(props: Readonly<WorkspaceHeaderProps>) {
         isOpen={isInviteModalOpen}
         setIsOpen={setIsInviteModalOpen}
         workspaceName={workspace.name}
+        joinCode={workspace.joinCode}
+        workspaceId={workspace._id}
       />
 
       <PreferencesModal
