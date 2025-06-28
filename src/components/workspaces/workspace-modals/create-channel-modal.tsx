@@ -15,7 +15,7 @@ import { useCreateChannel } from "@/api/channels/use-create-channel";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 
 function CreateChannelModal() {
-  //   const router = useRouter();
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useCreateChannelModal();
   const [channelInfo, setChannelInfo] = useState("");
   const { isPending, error, mutateAsync } = useCreateChannel({
@@ -37,8 +37,7 @@ function CreateChannelModal() {
       workspaceId: workspaceId,
     });
     console.log(channelId);
-    //add routing to channel url
-    // router.replace(`/workspace/${workspaceId}`);
+    router.replace(`/workspace/${workspaceId}/channel/${channelId}`);
   }
 
   function handleSuccess() {
