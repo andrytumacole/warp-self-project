@@ -1,5 +1,5 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { MutationCtx, query, QueryCtx } from "./_generated/server";
+import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
@@ -55,6 +55,51 @@ export const get = query({
     }
 
     return members;
+  },
+});
+
+export const join = mutation({
+  args: {
+    joinCode: v.string(),
+    workspaceId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+    const joinCode = args.joinCode.toLowerCase();
+
+    const workspace = await ctx.db.get(args.workspaceId);
+
+    if (!workspace) {
+      throw new ConvexError({
+        message: "[Error][Server] Workspace not found in the database",
+      });
+    }
+
+    if (workspace.joinCode !== joinCode) {
+      throw new ConvexError({
+        message: "[Error][Client] Invalid join code",
+      });
+    }
+
+    const isExistingMember = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (isExistingMember)
+      throw new ConvexError({
+        message: "[Error][Client] User is already a member of the workspace",
+      });
+
+    await ctx.db.insert("membershipInfos", {
+      workspaceId: args.workspaceId,
+      userId: userId,
+      role: "member",
+    });
+
+    return args.workspaceId;
   },
 });
 
