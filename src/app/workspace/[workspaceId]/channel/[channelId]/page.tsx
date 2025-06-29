@@ -39,7 +39,7 @@ function ChannelIdPage() {
       <ChannelHeader initialChannelName={channel.name} />
       {/* placeholder component that takes all remaining space and pushing down the text input */}
       <div className="flex-1" />
-      <ChatInput />
+      <ChatInput placeholder={`Message #${channel.name}`} />
     </div>
   );
 }
