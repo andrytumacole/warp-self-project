@@ -14,6 +14,7 @@ import { ImageIcon, Smile } from "lucide-react";
 import { MdSend } from "react-icons/md";
 import Hint from "../global/tooltip";
 import { cn } from "@/lib/utils";
+import EmojiPopover from "./emoji-popover";
 
 type EditorValue = {
   image: File | null;
@@ -137,6 +138,13 @@ function Editor(props: Readonly<EditorProps>) {
     }
   }
 
+  function onEmojiSelect(emoji: { native: string }) {
+    const quill = quillRef.current;
+
+    //add the emoji on the last line of the quill
+    quill?.insertText(quill?.getSelection()?.index ?? 0, emoji.native);
+  }
+
   //updated when text changes, and text changes when the quill ref TEXT_CHANGE event fires off
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
@@ -159,14 +167,11 @@ function Editor(props: Readonly<EditorProps>) {
           </Hint>
 
           <Hint label="Emoji">
-            <Button
-              disabled={disabled}
-              size={"iconSm"}
-              variant={"ghost"}
-              onClick={() => {}}
-            >
-              <Smile />
-            </Button>
+            <EmojiPopover onEmojiSelect={onEmojiSelect}>
+              <Button disabled={disabled} size={"iconSm"} variant={"ghost"}>
+                <Smile />
+              </Button>
+            </EmojiPopover>
           </Hint>
 
           {variant === "create" && (
@@ -221,11 +226,18 @@ function Editor(props: Readonly<EditorProps>) {
           )}
         </div>
       </div>
-      <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
-        <p>
-          <strong>Shift + Return</strong> to add a new line
-        </p>
-      </div>
+      {variant === "create" && (
+        <div
+          className={cn(
+            "p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 transition",
+            !isEmpty && "opacity-100"
+          )}
+        >
+          <p>
+            <strong>Shift + Return</strong> to add a new line
+          </p>
+        </div>
+      )}
     </div>
   );
 }
