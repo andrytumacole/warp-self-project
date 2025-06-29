@@ -123,7 +123,7 @@ export const update = mutation({
   },
 });
 
-export const remmove = mutation({
+export const remove = mutation({
   args: {
     channelId: v.id("channels"),
   },
