@@ -15,6 +15,7 @@ import { Button } from "../../ui/button";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useRemoveChannel } from "@/api/channels/use-delete-channel";
 
 interface DeleteChannelModalProp {
   isOpen: boolean;
@@ -26,20 +27,29 @@ interface DeleteChannelModalProp {
 function DeleteChannelModal(props: Readonly<DeleteChannelModalProp>) {
   const { isOpen, setIsOpen, channelName, channelId } = props;
   const workspaceId = useGetWorkspaceId();
+  const {
+    mutateAsync: remove,
+    isPending: isRemovingChannel,
+    error: deleteError,
+  } = useRemoveChannel({
+    onSuccess: handleDeleteSuccess,
+    onError: handleDeleteError,
+    onSettled: handleDeleteSettled,
+  });
 
   const router = useRouter();
 
   function handleDeleteSuccess() {
-    router.replace(`/workspace/${workspaceId}`);
-    console.log("successfully deleted workspace");
-    toast("Successfully deleted workspace!", {
+    router.replace(`/workspace/${workspaceId}/`);
+    toast("Successfully deleted channel!", {
       description: channelName,
     });
   }
 
   function handleDeleteError() {
-    console.log("Something went wrong in deleting the workspace");
-    // console.log("error: " + deleteError);
+    toast.error("Something went wrong in deleting the channel", {
+      description: deleteError?.message,
+    });
   }
 
   function handleDeleteSettled() {
@@ -48,7 +58,7 @@ function DeleteChannelModal(props: Readonly<DeleteChannelModalProp>) {
   }
 
   async function handleDelete() {
-    // await remove({ id: workspaceId });
+    await remove({ channelId: channelId });
   }
 
   return (
@@ -75,11 +85,12 @@ function DeleteChannelModal(props: Readonly<DeleteChannelModalProp>) {
             variant={"destructive"}
             onClick={handleDelete}
             className="focus-visible:outline-none"
+            disabled={isRemovingChannel}
           >
             Delete
           </Button>
           <DialogClose asChild>
-            <Button>Cancel</Button>
+            <Button disabled={isRemovingChannel}>Cancel</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
