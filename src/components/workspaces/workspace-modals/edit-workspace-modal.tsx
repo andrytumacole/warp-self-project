@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { FormEvent, useState } from "react";
-import { Id } from "../../../convex/_generated/dataModel";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 interface EditWorkspaceModalProp {
   isOpen: boolean;
