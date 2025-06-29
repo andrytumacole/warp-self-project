@@ -8,6 +8,7 @@ import { useEffect, useMemo } from "react";
 import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
 
 import { Loader, TriangleAlert } from "lucide-react";
+import useGetWorkspaceById from "@/api/workspaces/use-get-workspace-by-id";
 
 function WorkspaceIdPage() {
   const router = useRouter();
@@ -23,6 +24,10 @@ function WorkspaceIdPage() {
     isLoading: isFetchingMembershipInfo,
   } = useGetCurrentMembershipInfo({ workspaceId: workspaceId });
 
+  const { workspace, isLoading: isFetchingWorkspace } = useGetWorkspaceById({
+    id: workspaceId,
+  });
+
   const firstChannelId = useMemo(() => {
     return channels?.[0]?._id;
   }, [channels]);
@@ -32,7 +37,8 @@ function WorkspaceIdPage() {
   }, [userMembershipInfo?.role]);
 
   useEffect(() => {
-    if (isFetchingChannels || isFetchingMembershipInfo) return;
+    if (isFetchingChannels || isFetchingMembershipInfo || isFetchingWorkspace)
+      return;
 
     if (firstChannelId) {
       router.push(`/workspace/${workspaceId}/channel/${firstChannelId}`);
@@ -48,7 +54,19 @@ function WorkspaceIdPage() {
     workspaceId,
     isFetchingMembershipInfo,
     isAdmin,
+    isFetchingWorkspace,
   ]);
+
+  if (!workspace || !userMembershipInfo) {
+    return (
+      <div className="h-full flex items-center justify-center flex-col gap-2">
+        <TriangleAlert />
+        <span className="text-sm text-muted-foreground">
+          Workspace not found
+        </span>
+      </div>
+    );
+  }
 
   return !isAdmin ? (
     <div className="h-full flex items-center justify-center flex-col gap-2">
