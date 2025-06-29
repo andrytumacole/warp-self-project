@@ -7,7 +7,7 @@ type Options = {
   onError?: () => void;
   onSettled?: () => void;
 };
-function useUpdateChannel(options?: Options) {
+export const useUpdateChannel = (options?: Options) => {
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: useConvexMutation(api.channels.update),
     onSuccess: options?.onSuccess,
@@ -16,6 +16,4 @@ function useUpdateChannel(options?: Options) {
   });
 
   return { mutateAsync, isPending, error };
-}
-
-export default useUpdateChannel;
+};

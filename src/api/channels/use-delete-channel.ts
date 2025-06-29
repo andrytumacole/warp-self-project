@@ -7,7 +7,7 @@ type Options = {
   onError?: () => void;
   onSettled?: () => void;
 };
-function useRemoveChannel(options?: Options) {
+export const useRemoveChannel = (options?: Options) => {
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: useConvexMutation(api.channels.remove),
     onSuccess: options?.onSuccess,
@@ -16,6 +16,4 @@ function useRemoveChannel(options?: Options) {
   });
 
   return { mutateAsync, isPending, error };
-}
-
-export default useRemoveChannel;
+};
