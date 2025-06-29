@@ -1,21 +1,30 @@
+import { useState } from "react";
+
 import { FaChevronDown } from "react-icons/fa";
 import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { TrashIcon } from "lucide-react";
+import EditChannelModal from "./channel-modals/edit-channel-modal";
+import useGetChannelId from "@/hooks/use-get-channel-id";
+import DeleteChannelModal from "./channel-modals/delete-channel-modal";
 
 interface ChannelHeaderProps {
-  channelName: string;
+  initialChannelName: string;
 }
 
 function ChannelHeader(props: Readonly<ChannelHeaderProps>) {
-  const { channelName } = props;
+  const { initialChannelName } = props;
+  const channelId = useGetChannelId();
+  const [channelName, setChannelName] = useState(initialChannelName);
+  const [isEditChannelModalOpen, setIsEditChannelModalOpen] = useState(false);
+  const [isDeleteChannelModalOpen, setIsDeleteChannelModalOpen] =
+    useState(false);
+
   return (
     <div className="flex items-center px-4 bg-white border-b h-[49px] overflow-hidden">
       <Dialog>
@@ -34,19 +43,19 @@ function ChannelHeader(props: Readonly<ChannelHeaderProps>) {
             <DialogTitle># {channelName}</DialogTitle>
           </DialogHeader>
           <div className="px-4 pb-4 flex flex-col gap-y-2">
-            <div className="px-5 py-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold">Channel name</p>
-                <p className="text-sm text-[#1264a3] hover:underline font-semibold">
-                  Edit
-                </p>
-              </div>
-              <p className="text-sm"># {channelName}</p>
-            </div>
-            <button className="flex items-center gap-x-2 px-5 py-4 bg-white rounded-lg cursor-pointer border hover:bg-gray-50 text-rose-600">
-              <TrashIcon className="size-4 " />
-              <p className="text-sm font-semibold">Delete channel</p>
-            </button>
+            <EditChannelModal
+              isOpen={isEditChannelModalOpen}
+              setIsOpen={setIsEditChannelModalOpen}
+              channelId={channelId}
+              initialChannelName={initialChannelName}
+              setChannelName={setChannelName}
+            />
+            <DeleteChannelModal
+              isOpen={isDeleteChannelModalOpen}
+              setIsOpen={setIsDeleteChannelModalOpen}
+              channelId={channelId}
+              channelName={channelName}
+            />
           </div>
         </DialogContent>
       </Dialog>

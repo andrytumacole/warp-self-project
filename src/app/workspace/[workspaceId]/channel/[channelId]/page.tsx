@@ -35,7 +35,7 @@ function ChannelIdPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <ChannelHeader channelName={channel.name} />
+      <ChannelHeader initialChannelName={channel.name} />
     </div>
   );
 }
