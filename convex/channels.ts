@@ -26,6 +26,29 @@ export const get = query({
   },
 });
 
+export const getById = query({
+  args: {
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, args) => {
+    const channel = await ctx.db
+      .query("channels")
+      .withIndex("by_id", (q) => q.eq("_id", args.channelId))
+      .unique();
+
+    if (!channel) return null;
+
+    try {
+      const userId = await checkAuthorizedUser(ctx);
+      await checkAuthorizedUserRole(ctx, channel.workspaceId, userId);
+    } catch {
+      return null;
+    }
+
+    return channel;
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
@@ -43,7 +66,7 @@ export const create = mutation({
     //user is not a member and not an admin of the request workspace by id
     if (!membershipInfo || membershipInfo.role !== "admin") {
       throw new ConvexError({
-        message: "[client][workspace preferences]: Unauthorized user",
+        message: "[client][channels]: Unauthorized user",
       });
     }
 
@@ -63,7 +86,7 @@ async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
     throw new ConvexError({
-      message: "[client][workspace creation]: Unauthorized user",
+      message: "[client][channels]: Unauthorized user",
     });
   }
   return userId;
@@ -85,6 +108,6 @@ async function checkAuthorizedUserRole(
   //user is not a member of the request workspace by id
   if (!membershipInfo)
     throw new ConvexError({
-      message: "[client][workspace preferences]: Unauthorized user",
+      message: "[client][channels]: Unauthorized user",
     });
 }
