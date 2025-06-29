@@ -82,6 +82,85 @@ export const create = mutation({
   },
 });
 
+export const update = mutation({
+  args: {
+    channelId: v.id("channels"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+
+    const channel = await ctx.db
+      .query("channels")
+      .withIndex("by_id", (q) => q.eq("_id", args.channelId))
+      .unique();
+
+    if (!channel)
+      throw new ConvexError({
+        message: "[client][channels]: Channel not found",
+      });
+
+    //query if the current user is a member of the args workspace
+    const membershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    //user is not an admin of the workspace
+    if (!membershipInfo || membershipInfo.role !== "admin") {
+      throw new ConvexError({
+        message: "[client][channels]: Unauthorized user",
+      });
+    }
+
+    await ctx.db.patch(args.channelId, {
+      name: args.name,
+    });
+
+    return args.channelId;
+  },
+});
+
+export const remmove = mutation({
+  args: {
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+
+    const channel = await ctx.db
+      .query("channels")
+      .withIndex("by_id", (q) => q.eq("_id", args.channelId))
+      .unique();
+
+    if (!channel)
+      throw new ConvexError({
+        message: "[client][channels]: Channel not found",
+      });
+
+    //query if the current user is a member of the args workspace
+    const membershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    //user is not an admin of the workspace
+    if (!membershipInfo || membershipInfo.role !== "admin") {
+      throw new ConvexError({
+        message: "[client][channels]: Unauthorized user",
+      });
+    }
+
+    await ctx.db.delete(args.channelId);
+
+    return args.channelId;
+  },
+});
+
 async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
@@ -106,8 +185,9 @@ async function checkAuthorizedUserRole(
     .unique();
 
   //user is not a member of the request workspace by id
-  if (!membershipInfo)
+  if (!membershipInfo) {
     throw new ConvexError({
       message: "[client][channels]: Unauthorized user",
     });
+  }
 }
