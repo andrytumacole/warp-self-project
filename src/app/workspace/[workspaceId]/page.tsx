@@ -60,10 +60,21 @@ function WorkspaceIdPage() {
   if (!workspace || !userMembershipInfo) {
     return (
       <div className="h-full flex items-center justify-center flex-col gap-2">
-        <TriangleAlert />
-        <span className="text-sm text-muted-foreground">
-          Workspace not found
-        </span>
+        {isFetchingWorkspace || isFetchingMembershipInfo ? (
+          <>
+            <Loader className="animate-spin size-6 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
+              Fetching workspace from the database
+            </span>
+          </>
+        ) : (
+          <>
+            <TriangleAlert />
+            <span className="text-sm text-muted-foreground">
+              Workspace not found
+            </span>
+          </>
+        )}
       </div>
     );
   }
