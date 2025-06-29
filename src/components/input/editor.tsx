@@ -42,6 +42,7 @@ function Editor(props: Readonly<EditorProps>) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [text, setText] = useState("");
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
 
   //use own refs for this so that no need rerender
   //the main reason for using refs is these values are being used
@@ -127,6 +128,15 @@ function Editor(props: Readonly<EditorProps>) {
     };
   }, [innerRef]);
 
+  function handleToggleToolbar() {
+    setIsToolbarVisible((i) => !i);
+    const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
+
+    if (toolbarElement) {
+      toolbarElement.classList.toggle("hidden");
+    }
+  }
+
   //updated when text changes, and text changes when the quill ref TEXT_CHANGE event fires off
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
@@ -135,12 +145,14 @@ function Editor(props: Readonly<EditorProps>) {
       <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
         <div ref={containerRef} className="h-full" />
         <div className="flex px-2 pb-2 z-[5] items-center">
-          <Hint label="Hide formatting">
+          <Hint
+            label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
+          >
             <Button
-              disabled={false}
+              disabled={disabled}
               size={"iconSm"}
               variant={"ghost"}
-              onClick={() => {}}
+              onClick={handleToggleToolbar}
             >
               <PiTextAa />
             </Button>
@@ -148,7 +160,7 @@ function Editor(props: Readonly<EditorProps>) {
 
           <Hint label="Emoji">
             <Button
-              disabled={false}
+              disabled={disabled}
               size={"iconSm"}
               variant={"ghost"}
               onClick={() => {}}
@@ -161,7 +173,7 @@ function Editor(props: Readonly<EditorProps>) {
             <>
               <Hint label="Image">
                 <Button
-                  disabled={false}
+                  disabled={disabled}
                   size={"iconSm"}
                   variant={"ghost"}
                   onClick={() => {}}
@@ -191,7 +203,7 @@ function Editor(props: Readonly<EditorProps>) {
                 className=" bg-white hover:bg-white text-black"
                 variant={"outline"}
                 size={"sm"}
-                disabled={false}
+                disabled={disabled}
                 onClick={() => {}}
               >
                 Cancel
@@ -200,7 +212,7 @@ function Editor(props: Readonly<EditorProps>) {
                 className=" bg-slate-800 hover:bg-slate-800/80 text-white hover:text-white"
                 variant={"outline"}
                 size={"sm"}
-                disabled={false}
+                disabled={disabled || isEmpty}
                 onClick={() => {}}
               >
                 Save
