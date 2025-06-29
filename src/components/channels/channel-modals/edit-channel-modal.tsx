@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useUpdateChannel } from "@/api/channels/use-update-channel";
+import { toast } from "sonner";
 
 interface EditChannelModalProp {
   isOpen: boolean;
@@ -24,6 +26,34 @@ interface EditChannelModalProp {
 function EditChannelModal(props: Readonly<EditChannelModalProp>) {
   const { isOpen, setIsOpen, initialChannelName, setChannelName, channelId } =
     props;
+
+  const {
+    mutateAsync: update,
+    isPending: isUpdatingChannel,
+    error: updateError,
+  } = useUpdateChannel({
+    onSuccess: handleUpdateSuccess,
+    onError: handleUpdateError,
+    onSettled: handleUpdateSettled,
+  });
+
+  function handleUpdateSuccess() {
+    console.log("successfully created workspace");
+    toast("Successfully updated workspace!", {
+      description: editedChannelName,
+    });
+  }
+
+  function handleUpdateError() {
+    toast.error("Something went wrong in updating the workspace", {
+      description: updateError?.message,
+    });
+  }
+
+  function handleUpdateSettled() {
+    setIsOpen(false);
+  }
+
   const [editedChannelName, setEditedChannelName] =
     useState(initialChannelName);
 
@@ -38,6 +68,7 @@ function EditChannelModal(props: Readonly<EditChannelModalProp>) {
 
   async function handleEdit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    await update({ channelId: channelId, name: editedChannelName });
     setChannelName(editedChannelName);
   }
 
@@ -67,11 +98,14 @@ function EditChannelModal(props: Readonly<EditChannelModalProp>) {
             minLength={3}
             maxLength={80}
             placeholder={`Channel name e.g. "new-channel", "admin", "welcome"`}
+            disabled={isUpdatingChannel}
           />
           <DialogFooter>
             <Button>Save</Button>
             <DialogClose asChild>
-              <Button variant={"destructive"}>Cancel</Button>
+              <Button variant={"destructive"} disabled={isUpdatingChannel}>
+                Cancel
+              </Button>
             </DialogClose>
           </DialogFooter>
         </form>
