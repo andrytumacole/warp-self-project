@@ -1,4 +1,6 @@
-import Editor from "../input/editor";
+import dynamic from "next/dynamic";
+
+const Editor = dynamic(() => import("../input/editor"), { ssr: false });
 
 function ChatInput() {
   return (
