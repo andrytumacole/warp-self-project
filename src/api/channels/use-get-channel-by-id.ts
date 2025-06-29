@@ -2,13 +2,11 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 
-interface UseGetChannelsByWorkspaceIdProp {
+interface UseGetChannelByIdProp {
   channelId: Id<"channels">;
 }
 
-function useGetChannelsByWorkspaceId(
-  props: Readonly<UseGetChannelsByWorkspaceIdProp>
-) {
+function useGetChannelById(props: Readonly<UseGetChannelByIdProp>) {
   const { channelId } = props;
   const channel = useQuery(api.channels.getById, {
     channelId: channelId,
@@ -17,4 +15,4 @@ function useGetChannelsByWorkspaceId(
   return { channel, isLoading };
 }
 
-export default useGetChannelsByWorkspaceId;
+export default useGetChannelById;
