@@ -23,7 +23,7 @@ function Hint(props: Readonly<HintProps>) {
         <TooltipContent
           side={side}
           align={align}
-          className="bg-black text-white border border-white/5"
+          className="bg-black/50 text-white border border-white/5"
         >
           <p className="font-medium text-xs">{label}</p>
         </TooltipContent>
