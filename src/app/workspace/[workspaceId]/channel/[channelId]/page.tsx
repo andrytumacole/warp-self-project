@@ -1,6 +1,7 @@
 "use client";
 
 import useGetChannelById from "@/api/channels/use-get-channel-by-id";
+import ChannelHeader from "@/components/channels/channel-header";
 import useGetChannelId from "@/hooks/use-get-channel-id";
 
 function ChannelIdPage() {
@@ -10,7 +11,9 @@ function ChannelIdPage() {
   });
 
   return (
-    <div className="h-full flex items-center justify-center">Channel page</div>
+    <div className="h-full flex flex-col">
+      <ChannelHeader />
+    </div>
   );
 }
 
