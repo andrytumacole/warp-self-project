@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 import {
@@ -27,6 +27,15 @@ function EditChannelModal(props: Readonly<EditChannelModalProp>) {
   const [editedChannelName, setEditedChannelName] =
     useState(initialChannelName);
 
+  useEffect(() => {
+    setEditedChannelName(initialChannelName);
+  }, [setEditedChannelName, initialChannelName, isOpen]);
+
+  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const parsedValue = e.target.value.replace(/\s+/g, "-").toLowerCase();
+    setEditedChannelName(parsedValue);
+  }
+
   async function handleEdit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setChannelName(editedChannelName);
@@ -52,12 +61,12 @@ function EditChannelModal(props: Readonly<EditChannelModalProp>) {
         <form className="space-y-4" onSubmit={handleEdit}>
           <Input
             value={editedChannelName}
-            onChange={(e) => setEditedChannelName(e.target.value)}
+            onChange={handleInputChange}
             required
             autoFocus
             minLength={3}
             maxLength={80}
-            placeholder={`Workspace name e.g. "Work", "Personal", "Home"`}
+            placeholder={`Channel name e.g. "new-channel", "admin", "welcome"`}
           />
           <DialogFooter>
             <Button>Save</Button>
