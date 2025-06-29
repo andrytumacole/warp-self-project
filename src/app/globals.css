@@ -79,23 +79,23 @@ body,
   }
 }
 
-.quill-toolbar {
+.ql-toolbar {
   border: none !important;
   background-color: #f8f8f8 !important;
 }
 
-.quill-toolbar .quillformats:not(:last-child) {
+.ql-toolbar .qlformats:not(:last-child) {
   border-right: 1px solid #dcdcdc !important;
   padding-right: 12px !important;
 }
 
-.quill-container {
+.ql-container {
   font-family: "Lato", sans-serif !important;
   border: none !important;
   height: unset !important;
 }
 
-.quill-editor {
+.ql-editor {
   line-height: 22px !important;
   padding: 8px 12px !important;
   color: #1d1c1d !important;
@@ -104,19 +104,19 @@ body,
   font-size: 14px !important;
 }
 
-.quill-editor a {
+.ql-editor a {
   color: #1264a3 !important;
 }
 
-.quill-editor a:hover {
+.ql-editor a:hover {
   text-decoration: underline !important;
 }
 
-.quill-renderer {
+.ql-renderer {
   padding: 0 !important;
 }
 
-.quill-editor::before {
+.ql-editor::before {
   left: 12px !important;
   font-family: "Lato", sans-serif !important;
   color: #8d8d8d !important;
