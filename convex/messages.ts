@@ -227,6 +227,41 @@ export const update = mutation({
       body: args.body,
       updatedAt: Date.now(),
     });
+
+    return args.id;
+  },
+});
+
+export const remove = mutation({
+  args: {
+    id: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+
+    const message = await ctx.db.get(args.id);
+
+    if (!message) {
+      throw new ConvexError({
+        message: "[error][update message]: Message not found",
+      });
+    }
+
+    const membershipInfo = await getMembershipInfo(
+      ctx,
+      message.workspaceId,
+      userId
+    );
+
+    if (!membershipInfo || membershipInfo._id !== message.membershipInfoId) {
+      throw new ConvexError({
+        message: "[error][update message]: Unauthorized user",
+      });
+    }
+
+    await ctx.db.delete(args.id);
+
+    return args.id;
   },
 });
 

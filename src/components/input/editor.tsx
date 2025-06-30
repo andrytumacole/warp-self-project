@@ -56,7 +56,6 @@ function Editor(props: Readonly<EditorProps>) {
   const quillRef = useRef<Quill | null>(null);
   const defaultValueRef = useRef(defaultValue);
   const disabledRef = useRef(disabled);
-  const cancelRef = useRef(onCancel);
 
   //extract the image from here inside the useEffect
   //ref because we don't want to rerender when adding image
@@ -65,7 +64,6 @@ function Editor(props: Readonly<EditorProps>) {
   //set the values before browser paints
   useLayoutEffect(() => {
     submitRef.current = onSubmit;
-    cancelRef.current = onCancel;
     placeholderRef.current = placeholder;
     defaultValueRef.current = defaultValue;
     disabledRef.current = disabled;
@@ -94,7 +92,7 @@ function Editor(props: Readonly<EditorProps>) {
           bindings: {
             enter: {
               key: "Enter",
-              handler: async () => {
+              handler: () => {
                 const text = quill.getText();
                 const addedImage = imageElementRef.current?.files?.[0] ?? null;
                 const isEmpty =
@@ -103,8 +101,7 @@ function Editor(props: Readonly<EditorProps>) {
                 if (isEmpty) return;
 
                 const body = JSON.stringify(quill.getContents());
-                await submitRef.current?.({ body: body, image: addedImage });
-                cancelRef.current?.();
+                submitRef.current?.({ body: body, image: addedImage });
               },
             },
           },

@@ -71,7 +71,7 @@ function Message(props: Readonly<MessageProps>) {
   const {
     mutateAsync: updateMessage,
     isPending: isUpdatingMessage,
-    error,
+    error: errorUpdate,
   } = useUpdateMessage({
     onSuccess: handleUpdateMessageSuccess,
     onError: handleUpdateMessageError,
@@ -85,10 +85,13 @@ function Message(props: Readonly<MessageProps>) {
   }
   function handleUpdateMessageError() {
     toast.error("Something went wrong in editing your message", {
-      description: error?.message,
+      description: errorUpdate?.message,
     });
   }
-  function handleUpdateMessageSettled() {}
+  function handleUpdateMessageSettled() {
+    setEditingId(null);
+  }
+
   async function handleUpdateMessage({ body }: { body: string }) {
     await updateMessage({
       body: body,
@@ -151,6 +154,7 @@ function Message(props: Readonly<MessageProps>) {
           handleDelete={() => {}}
           handleReaction={() => {}}
           hideThreadButton={hideThreadButton}
+          messageId={messageId}
         />
       )}
     </div>
@@ -209,6 +213,7 @@ function Message(props: Readonly<MessageProps>) {
           handleDelete={() => {}}
           handleReaction={() => {}}
           hideThreadButton={hideThreadButton}
+          messageId={messageId}
         />
       )}
     </div>

@@ -2,6 +2,9 @@ import { MessageSquareTextIcon, Pencil, Smile, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import Hint from "../global/tooltip";
 import EmojiPopover from "../input/emoji-popover";
+import { useState } from "react";
+import ConfirmDeleteMessageModal from "./confirm-delete-message-modal";
+import { Id } from "../../../convex/_generated/dataModel";
 
 interface MessageToolbarProps {
   isAuthor: boolean;
@@ -11,6 +14,7 @@ interface MessageToolbarProps {
   handleDelete: () => void;
   handleReaction: (value: string) => void;
   hideThreadButton?: boolean;
+  messageId: Id<"messages">;
 }
 
 function MessageToolbar(props: Readonly<MessageToolbarProps>) {
@@ -22,7 +26,11 @@ function MessageToolbar(props: Readonly<MessageToolbarProps>) {
     handleReaction,
     handleThread,
     hideThreadButton,
+    messageId,
   } = props;
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
   return (
     <div className="absolute top-0 right-5">
       <div className="group-hover:opacity-100 opacity-0 transition-opacity border bg-white rounded-sm shadow-sm">
@@ -61,14 +69,12 @@ function MessageToolbar(props: Readonly<MessageToolbarProps>) {
               </Button>
             </Hint>
             <Hint label="Delete message">
-              <Button
-                variant={"ghost"}
-                size={"iconSm"}
-                disabled={isPending}
-                onClick={handleDelete}
-              >
-                <Trash className="text-rose-600" />
-              </Button>
+              <ConfirmDeleteMessageModal
+                isOpen={isDeleteOpen}
+                messageId={messageId}
+                setIsOpen={setIsDeleteOpen}
+                isPending={isPending}
+              />
             </Hint>
           </>
         )}
