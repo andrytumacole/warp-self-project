@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
+import { mutation, MutationCtx, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 
@@ -10,7 +10,7 @@ export const create = mutation({
     workspaceId: v.id("workspaces"),
     channelId: v.optional(v.id("channels")),
     parentMessageId: v.optional(v.id("messages")),
-    //TODO: add conversationId
+    conversationId: v.optional(v.id("conversations")),
   },
   handler: async (ctx, args) => {
     const userId = await checkAuthorizedUser(ctx);
@@ -26,7 +26,23 @@ export const create = mutation({
       });
     }
 
-    //Handle conversationId
+    let _conversationId = args.conversationId;
+
+    // Only possible if we are replying in a thread in 1:1 conversation
+    //in this case, the url does not contain the conversationId. also note that it does not come from a channel (from dm)
+    //what we have is a parentMessageId, so we will refer to that
+    if (!args.conversationId && !args.channelId && args.parentMessageId) {
+      const parentMessage = await ctx.db.get(args.parentMessageId);
+
+      if (!parentMessage) {
+        throw new ConvexError({
+          message: "[client][messages]: Parent message not found",
+        });
+      }
+
+      //now we can refer to itself meaning that we are replying from a message in a one-to-one thread (dm)
+      _conversationId = parentMessage.conversationId;
+    }
 
     const messageId = await ctx.db.insert("messages", {
       memberId: membershipInfo._id,
@@ -34,6 +50,7 @@ export const create = mutation({
       image: args.image,
       channelId: args.channelId,
       workspaceId: args.workspaceId,
+      conversationId: _conversationId,
       parentMessageId: args.parentMessageId,
       updatedAt: Date.now(),
     });
