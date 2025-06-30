@@ -10,6 +10,8 @@ import MessageToolbar from "./message-toolbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useToggleReaction } from "@/api/reactions/use-toggle-reaction";
+import ReactionsBar from "./reactions-bar";
 
 const MessageRenderer = dynamic(() => import("./message-renderer"), {
   ssr: false,
@@ -78,6 +80,9 @@ function Message(props: Readonly<MessageProps>) {
     onSettled: handleUpdateMessageSettled,
   });
 
+  const { mutateAsync: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
+
   const isMessagePending = isUpdatingMessage;
 
   function handleUpdateMessageSuccess() {
@@ -92,11 +97,19 @@ function Message(props: Readonly<MessageProps>) {
     setEditingId(null);
   }
 
+  function handleToggleError() {
+    toast.error("Failed to toggle reaction");
+  }
+
   async function handleUpdateMessage({ body }: { body: string }) {
     await updateMessage({
       body: body,
       id: messageId,
     });
+  }
+
+  async function handleToggleReaction(value: string) {
+    await toggleReaction({ messageId: messageId, value: value });
   }
 
   function formatFullTime(date: Date) {
@@ -142,6 +155,7 @@ function Message(props: Readonly<MessageProps>) {
             {updatedAt && (
               <span className="text-xs text-muted-foreground">edited</span>
             )}
+            <ReactionsBar data={reactions} onChange={handleToggleReaction} />
           </div>
         )}
       </div>
@@ -152,7 +166,7 @@ function Message(props: Readonly<MessageProps>) {
           handleEdit={() => setEditingId(messageId)}
           handleThread={() => {}}
           handleDelete={() => {}}
-          handleReaction={() => {}}
+          handleReaction={handleToggleReaction}
           hideThreadButton={hideThreadButton}
           messageId={messageId}
         />
@@ -201,6 +215,7 @@ function Message(props: Readonly<MessageProps>) {
             {updatedAt && (
               <span className="text-xs text-muted-foreground">edited</span>
             )}
+            <ReactionsBar data={reactions} onChange={handleToggleReaction} />
           </div>
         )}
       </div>
@@ -211,7 +226,7 @@ function Message(props: Readonly<MessageProps>) {
           handleEdit={() => setEditingId(messageId)}
           handleThread={() => {}}
           handleDelete={() => {}}
-          handleReaction={() => {}}
+          handleReaction={handleToggleReaction}
           hideThreadButton={hideThreadButton}
           messageId={messageId}
         />
