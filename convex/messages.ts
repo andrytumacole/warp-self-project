@@ -4,6 +4,57 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 
+export const getById = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+
+    const message = await ctx.db.get(args.messageId);
+
+    if (!message) return null;
+
+    const membershipInfoByWorkspace = await getMembershipInfo(
+      ctx,
+      message.workspaceId,
+      userId
+    );
+
+    //requester is not a member of the workspace
+    if (!membershipInfoByWorkspace) return null;
+
+    //the membership info of the user that wrote the message
+    const membershipInfo = await populateMembershipInfo(
+      ctx,
+      message.membershipInfoId
+    );
+
+    if (!membershipInfo) return null;
+
+    const user = await populateUser(ctx, userId);
+
+    if (!user) return null;
+
+    const reactions = await populateReactions(ctx, args.messageId);
+    const normalizedReactions = normalizeReactions(reactions);
+    const reactionsWithoutMemberIdProp = normalizedReactions.map(
+      //extract membershipInfoId and then return the rest
+      ({ membershipInfoId, ...rest }) => rest
+    );
+
+    return {
+      ...message,
+      image: message.image
+        ? await ctx.storage.getUrl(message.image)
+        : undefined,
+      user,
+      membershipInfo,
+      reactions: reactionsWithoutMemberIdProp,
+    };
+  },
+});
+
 export const get = query({
   args: {
     channelId: v.optional(v.id("channels")),
@@ -66,50 +117,8 @@ export const get = query({
                 ? await ctx.storage.getUrl(message.image)
                 : undefined;
 
-              //normalize the reactions of message
-              const reactionsWithCounts = reactions.map((reaction) => {
-                //each reaction will have an additional count prop
-                return {
-                  //extract the rest of the reaction props
-                  ...reaction,
-                  //counts how many reactions are equal to the curr reaction
-                  count: reactions.filter((r) => r.value === reaction.value)
-                    .length,
-                };
-              });
-
-              //reduce the reactions to unique reactions
-              const dedupedReactions = reactionsWithCounts.reduce(
-                (acc, reaction) => {
-                  //check if reaction is in acc already
-                  const existingReaction = acc.find(
-                    (r) => r.value === reaction.value
-                  );
-
-                  //if it is then add membership info about who sent that reaction
-                  if (existingReaction) {
-                    existingReaction.membershipInfoIds = Array.from(
-                      new Set([
-                        ...existingReaction.membershipInfoIds,
-                        reaction.membershipInfoId,
-                      ])
-                    );
-                  } else {
-                    acc.push({
-                      ...reaction,
-                      membershipInfoIds: [reaction.membershipInfoId],
-                    });
-                  }
-
-                  return acc;
-                },
-                [] as (Doc<"reactions"> & {
-                  count: number;
-                  membershipInfoIds: Id<"membershipInfos">[];
-                })[]
-              );
-
-              const reactionsWithoutMemberIdProp = dedupedReactions.map(
+              const normalizedReactions = normalizeReactions(reactions);
+              const reactionsWithoutMemberIdProp = normalizedReactions.map(
                 //extract membershipInfoId and then return the rest
                 ({ membershipInfoId, ...rest }) => rest
               );
@@ -352,4 +361,48 @@ async function populateThread(ctx: QueryCtx, messageId: Id<"messages">) {
     image: lastReplyMessageUser?.image,
     timestamp: lastReplyMessage._creationTime,
   };
+}
+
+function normalizeReactions(reactions: Doc<"reactions">[]) {
+  //normalize the reactions of message
+  const reactionsWithCounts = reactions.map((reaction) => {
+    //each reaction will have an additional count prop
+    return {
+      //extract the rest of the reaction props
+      ...reaction,
+      //counts how many reactions are equal to the curr reaction
+      count: reactions.filter((r) => r.value === reaction.value).length,
+    };
+  });
+
+  //reduce the reactions to unique reactions
+  const dedupedReactions = reactionsWithCounts.reduce(
+    (acc, reaction) => {
+      //check if reaction is in acc already
+      const existingReaction = acc.find((r) => r.value === reaction.value);
+
+      //if it is then add membership info about who sent that reaction
+      if (existingReaction) {
+        existingReaction.membershipInfoIds = Array.from(
+          new Set([
+            ...existingReaction.membershipInfoIds,
+            reaction.membershipInfoId,
+          ])
+        );
+      } else {
+        acc.push({
+          ...reaction,
+          membershipInfoIds: [reaction.membershipInfoId],
+        });
+      }
+
+      return acc;
+    },
+    [] as (Doc<"reactions"> & {
+      count: number;
+      membershipInfoIds: Id<"membershipInfos">[];
+    })[]
+  );
+
+  return dedupedReactions;
 }
