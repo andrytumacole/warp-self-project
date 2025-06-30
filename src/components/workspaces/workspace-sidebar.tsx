@@ -14,7 +14,7 @@ import useGetChannelsByWorkspaceId from "@/api/channels/use-get-channels-by-work
 import WorkspaceSection from "./workspace-section";
 import useGetMembersByWorkspaceId from "@/api/membership-infos/use-get-members-by-workspace-id";
 import WorkspaceSidebarUserItem from "./workspace-sidebar-user-item";
-import { useCreateChannelModal } from "@/atom-states/use-create-channel-modal";
+import { useCreateChannelModal } from "@/store/use-create-channel-modal";
 import useGetChannelId from "@/hooks/use-get-channel-id";
 
 function WorkspaceSidebar() {

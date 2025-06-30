@@ -1,6 +1,6 @@
 "use client";
 
-import { useCreateWorkspaceModal } from "@/atom-states/use-create-workspace-modal";
+import { useCreateWorkspaceModal } from "@/store/use-create-workspace-modal";
 import {
   Dialog,
   DialogContent,

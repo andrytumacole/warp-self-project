@@ -1,7 +1,7 @@
 "use client";
 
 import useGetChannelsByWorkspaceId from "@/api/channels/use-get-channels-by-workspace-id";
-import { useCreateChannelModal } from "@/atom-states/use-create-channel-modal";
+import { useCreateChannelModal } from "@/store/use-create-channel-modal";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";

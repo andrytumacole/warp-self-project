@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useCreateChannelModal } from "@/atom-states/use-create-channel-modal";
+import { useCreateChannelModal } from "@/store/use-create-channel-modal";
 import { useRouter } from "next/navigation";
 import { useCreateChannel } from "@/api/channels/use-create-channel";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
