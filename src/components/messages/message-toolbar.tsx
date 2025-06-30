@@ -37,7 +37,12 @@ function MessageToolbar(props: Readonly<MessageToolbarProps>) {
 
         {!hideThreadButton && (
           <Hint label="Reply in thread">
-            <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+            <Button
+              variant={"ghost"}
+              size={"iconSm"}
+              disabled={isPending}
+              onClick={handleThread}
+            >
               <MessageSquareTextIcon />
             </Button>
           </Hint>
@@ -46,12 +51,22 @@ function MessageToolbar(props: Readonly<MessageToolbarProps>) {
         {isAuthor && (
           <>
             <Hint label="Edit message">
-              <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+              <Button
+                variant={"ghost"}
+                size={"iconSm"}
+                disabled={isPending}
+                onClick={handleEdit}
+              >
                 <Pencil />
               </Button>
             </Hint>
             <Hint label="Delete message">
-              <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+              <Button
+                variant={"ghost"}
+                size={"iconSm"}
+                disabled={isPending}
+                onClick={handleDelete}
+              >
                 <Trash className="text-rose-600" />
               </Button>
             </Hint>

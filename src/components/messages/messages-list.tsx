@@ -87,7 +87,7 @@ function MessageList(props: Readonly<MessageListProps>) {
               return (
                 <Message
                   key={message?._id}
-                  id={message!._id}
+                  messageId={message!._id}
                   membershipInfoId={message!.membershipInfoId}
                   authorName={message!.user.name}
                   authorImage={message!.user.image}

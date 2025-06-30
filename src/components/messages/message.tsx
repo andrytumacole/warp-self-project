@@ -2,18 +2,24 @@ import dynamic from "next/dynamic";
 
 import { Doc, Id } from "../../../convex/_generated/dataModel";
 import { format, isToday, isYesterday } from "date-fns";
+import { useUpdateMessage } from "@/api/messages/use-update-message";
 
 import Hint from "../global/tooltip";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Thumbnail from "./thumbnail";
 import MessageToolbar from "./message-toolbar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const MessageRenderer = dynamic(() => import("./message-renderer"), {
   ssr: false,
 });
+const Editor = dynamic(() => import("../input/editor"), {
+  ssr: false,
+});
 
 interface MessageProps {
-  id: Id<"messages">;
+  messageId: Id<"messages">;
   membershipInfoId: Id<"membershipInfos">;
   authorImage?: string;
   authorName?: string;
@@ -41,7 +47,7 @@ interface MessageProps {
 
 function Message(props: Readonly<MessageProps>) {
   const {
-    id,
+    messageId,
     isAuthor,
     membershipInfoId,
     authorImage,
@@ -62,6 +68,34 @@ function Message(props: Readonly<MessageProps>) {
 
   const avatarFallbackContent = authorName.charAt(0).toUpperCase();
 
+  const {
+    mutateAsync: updateMessage,
+    isPending: isUpdatingMessage,
+    error,
+  } = useUpdateMessage({
+    onSuccess: handleUpdateMessageSuccess,
+    onError: handleUpdateMessageError,
+    onSettled: handleUpdateMessageSettled,
+  });
+
+  const isMessagePending = isUpdatingMessage;
+
+  function handleUpdateMessageSuccess() {
+    toast("Message has been edited");
+  }
+  function handleUpdateMessageError() {
+    toast.error("Something went wrong in editing your message", {
+      description: error?.message,
+    });
+  }
+  function handleUpdateMessageSettled() {}
+  async function handleUpdateMessage({ body }: { body: string }) {
+    await updateMessage({
+      body: body,
+      id: messageId,
+    });
+  }
+
   function formatFullTime(date: Date) {
     const timeString = `at ${format(date, "h:mm a")}`;
     if (isToday(date)) {
@@ -73,25 +107,60 @@ function Message(props: Readonly<MessageProps>) {
     return `${format(date, "MMM d, yyyy")} ${timeString}`;
   }
 
+  //TODO: fix isCompact conditional rendering
+
   return isCompact ? (
-    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative">
+    <div
+      className={cn(
+        "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative",
+        isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
+      )}
+    >
       <div className="flex gap-2 items-center">
         <Hint label={formatFullTime(new Date(createdAt))}>
           <button className=" w-[45px] text-xs text-muted-foreground opacity-0 group-hover:opacity-100 leading-[22px] text-center hover:underline">
             {format(new Date(createdAt), "hh:mm")}
           </button>
         </Hint>
-        <div className="flex flex-col w-full  ">
-          <MessageRenderer rawMessage={body} />
-          <Thumbnail url={image} />
-          {updatedAt && (
-            <span className="text-xs text-muted-foreground">edited</span>
-          )}
-        </div>
+        {isEditing ? (
+          <div className="w-full h-full">
+            <Editor
+              onSubmit={handleUpdateMessage}
+              disabled={isMessagePending}
+              defaultValue={JSON.parse(body)}
+              onCancel={() => setEditingId(null)}
+              variant="update"
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col w-full overflow-hidden">
+            <MessageRenderer rawMessage={body} />
+            <Thumbnail url={image} />
+            {updatedAt && (
+              <span className="text-xs text-muted-foreground">edited</span>
+            )}
+          </div>
+        )}
       </div>
+      {!isEditing && (
+        <MessageToolbar
+          isAuthor={isAuthor}
+          isPending={isMessagePending}
+          handleEdit={() => setEditingId(messageId)}
+          handleThread={() => {}}
+          handleDelete={() => {}}
+          handleReaction={() => {}}
+          hideThreadButton={hideThreadButton}
+        />
+      )}
     </div>
   ) : (
-    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative">
+    <div
+      className={cn(
+        "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative",
+        isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
+      )}
+    >
       <div className="flex gap-2 items-center">
         <button>
           <Avatar>
@@ -101,32 +170,41 @@ function Message(props: Readonly<MessageProps>) {
             </AvatarFallback>
           </Avatar>
         </button>
-        <div className="flex flex-col w-full overflow-hidden ">
-          <div className="flex text-sm gap-x-3">
-            <button
-              onClick={() => {}}
-              className="font-bold text-primary hover:underline"
-            >
-              {authorName}
-            </button>
-            <Hint label={formatFullTime(new Date(createdAt))}>
-              <button className="text-xs text-muted-foreground hover:underline">
-                {format(new Date(createdAt), "h:mm a")}
-              </button>
-            </Hint>
+        {isEditing ? (
+          <div className="w-full h-full">
+            <Editor
+              onSubmit={handleUpdateMessage}
+              disabled={isMessagePending}
+              defaultValue={JSON.parse(body)}
+              onCancel={() => setEditingId(null)}
+              variant="update"
+            />
           </div>
-          <MessageRenderer rawMessage={body} />
-          <Thumbnail url={image} />
-          {updatedAt && (
-            <span className="text-xs text-muted-foreground">edited</span>
-          )}
-        </div>
+        ) : (
+          <div className="flex flex-col w-full overflow-hidden ">
+            <div className="flex text-sm gap-x-3">
+              <button className="font-bold text-primary hover:underline">
+                {authorName}
+              </button>
+              <Hint label={formatFullTime(new Date(createdAt))}>
+                <button className="text-xs text-muted-foreground hover:underline">
+                  {format(new Date(createdAt), "h:mm a")}
+                </button>
+              </Hint>
+            </div>
+            <MessageRenderer rawMessage={body} />
+            <Thumbnail url={image} />
+            {updatedAt && (
+              <span className="text-xs text-muted-foreground">edited</span>
+            )}
+          </div>
+        )}
       </div>
       {!isEditing && (
         <MessageToolbar
           isAuthor={isAuthor}
-          isPending={false}
-          handleEdit={() => setEditingId(id)}
+          isPending={isMessagePending}
+          handleEdit={() => setEditingId(messageId)}
           handleThread={() => {}}
           handleDelete={() => {}}
           handleReaction={() => {}}
