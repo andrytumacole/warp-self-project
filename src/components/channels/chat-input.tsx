@@ -28,25 +28,33 @@ function ChatInput(props: Readonly<ChatInputProps>) {
     isPending: isCreatingMessage,
     error,
   } = useCreateMessage({
-    onError: handleError,
-    onSuccess: handleSuccess,
+    onError: handleMessageError,
+    onSuccess: handleMessageSuccess,
+    onSettled: handleMessageSettled,
   });
+
   const editorRef = useRef<Quill | null>(null);
 
   //dirty trick that destroys old editor and rerenders a new one with a new key
   const [editorKey, setEditorKey] = useState(0);
+  const [isChatPending, setIsChatPending] = useState(false);
 
-  function handleError() {
+  function handleMessageError() {
     toast.error("Something went wrong in sending the message");
     console.log("error: ", error);
   }
 
-  function handleSuccess() {
+  function handleMessageSuccess() {
     setEditorKey((e) => e + 1);
+  }
+
+  function handleMessageSettled() {
+    setIsChatPending(false);
   }
 
   async function handleSubmit(submitData: SubmitType) {
     console.log(submitData);
+    setIsChatPending(true);
     await mutateAsync({
       workspaceId: workspaceId,
       channelId: channelId,
@@ -60,7 +68,7 @@ function ChatInput(props: Readonly<ChatInputProps>) {
         key={editorKey}
         variant="create"
         onSubmit={handleSubmit}
-        disabled={false}
+        disabled={isChatPending}
         innerRef={editorRef}
         placeholder={placeholder}
       />
