@@ -5,6 +5,7 @@ import { format, isToday, isYesterday } from "date-fns";
 
 import Hint from "../global/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Thumbnail from "./thumbnail";
 
 const MessageRenderer = dynamic(() => import("./message-renderer"), {
   ssr: false,
@@ -75,12 +76,13 @@ function Message(props: Readonly<MessageProps>) {
     <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative">
       <div className="flex gap-2 items-center">
         <Hint label={formatFullTime(new Date(createdAt))}>
-          <button className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 w-[40px] leading-[22px] text-center hover:underline">
+          <button className=" w-[45px] text-xs text-muted-foreground opacity-0 group-hover:opacity-100 leading-[22px] text-center hover:underline">
             {format(new Date(createdAt), "hh:mm")}
           </button>
         </Hint>
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full  ">
           <MessageRenderer rawMessage={body} />
+          <Thumbnail url={image} />
           {updatedAt && (
             <span className="text-xs text-muted-foreground">edited</span>
           )}
@@ -88,17 +90,17 @@ function Message(props: Readonly<MessageProps>) {
       </div>
     </div>
   ) : (
-    <div className="flex flex-col  gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative">
+    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative">
       <div className="flex gap-2 items-center">
         <button>
-          <Avatar className="size-10 hover:opacity-75 transition">
+          <Avatar>
             <AvatarImage src={authorImage} alt={authorName} />
             <AvatarFallback className="text-white bg-sky-500 text-sm">
               {avatarFallbackContent}
             </AvatarFallback>
           </Avatar>
         </button>
-        <div className="flex flex-col w-full overflow-hidden">
+        <div className="flex flex-col w-full overflow-hidden ">
           <div className="flex text-sm gap-x-3">
             <button
               onClick={() => {}}
@@ -113,6 +115,7 @@ function Message(props: Readonly<MessageProps>) {
             </Hint>
           </div>
           <MessageRenderer rawMessage={body} />
+          <Thumbnail url={image} />
           {updatedAt && (
             <span className="text-xs text-muted-foreground">edited</span>
           )}
