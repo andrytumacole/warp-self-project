@@ -10,7 +10,7 @@ type Options = {
 
 export const useUpdateMessage = (options?: Options) => {
   const { isPending, data, error, mutateAsync } = useMutation({
-    mutationFn: useConvexMutation(api.messages.create),
+    mutationFn: useConvexMutation(api.messages.update),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
     onSettled: options?.onSettled,
