@@ -38,6 +38,8 @@ function MessageList(props: Readonly<MessageListProps>) {
   const { membershipInfo: userMembershipInfo, isLoading } =
     useGetCurrentMembershipInfo({ workspaceId: workspaceId });
 
+  //pass setEditingId to each message and then when one message wants to edit
+  //we can identify which one we will patch in the db
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
   const groupedMessagesByDate = data?.reduce(
