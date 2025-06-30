@@ -1,5 +1,6 @@
 "use client";
 
+import { usePanel } from "@/hooks/use-panel";
 import Toolbar from "@/components/home/toolbar";
 import Sidebar from "@/components/home/sidebar";
 import {
@@ -14,6 +15,10 @@ export default function WorkspaceIdLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  //gets the parentMessageId params in the url
+  const { parentMessageId, onClose: _ } = usePanel();
+  const isPanelShown = !!parentMessageId;
+
   return (
     <div className="h-full bg-[#f5f5f5]">
       <Toolbar />
@@ -33,6 +38,14 @@ export default function WorkspaceIdLayout({
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel minSize={20}>{children}</ResizablePanel>
+          {isPanelShown && (
+            <>
+              <ResizableHandle withHandle />
+              <ResizablePanel minSize={20} defaultSize={29}>
+                {parentMessageId}
+              </ResizablePanel>
+            </>
+          )}
         </ResizablePanelGroup>
       </div>
     </div>
