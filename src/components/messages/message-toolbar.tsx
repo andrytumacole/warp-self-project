@@ -1,4 +1,4 @@
-import { MessageSquareTextIcon, Pencil, Smile, Trash } from "lucide-react";
+import { MessageSquareTextIcon, Pencil, Smile } from "lucide-react";
 import { Button } from "../ui/button";
 import Hint from "../global/tooltip";
 import EmojiPopover from "../input/emoji-popover";
@@ -11,7 +11,6 @@ interface MessageToolbarProps {
   isPending: boolean;
   handleEdit: () => void;
   handleThread: () => void;
-  handleDelete: () => void;
   handleReaction: (value: string) => void;
   hideThreadButton?: boolean;
   messageId: Id<"messages">;
@@ -22,7 +21,6 @@ function MessageToolbar(props: Readonly<MessageToolbarProps>) {
     isAuthor,
     isPending,
     handleEdit,
-    handleDelete,
     handleReaction,
     handleThread,
     hideThreadButton,

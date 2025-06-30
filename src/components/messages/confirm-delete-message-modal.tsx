@@ -13,7 +13,8 @@ import {
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Id } from "../../../convex/_generated/dataModel";
-import { Trash, TrashIcon } from "lucide-react";
+import { Trash } from "lucide-react";
+import { usePanel } from "@/hooks/use-panel";
 
 interface DeleteChannelModalProp {
   isOpen: boolean;
@@ -23,6 +24,7 @@ interface DeleteChannelModalProp {
 }
 
 function ConfirmDeleteMessageModal(props: Readonly<DeleteChannelModalProp>) {
+  const { parentMessageId, onClose } = usePanel();
   const { isOpen, setIsOpen, messageId, isPending } = props;
 
   const {
@@ -37,6 +39,10 @@ function ConfirmDeleteMessageModal(props: Readonly<DeleteChannelModalProp>) {
 
   function handleDeleteSuccess() {
     toast("Message successfully deleted");
+    //close the thread of the message if it is open
+    if (parentMessageId === messageId) {
+      onClose();
+    }
   }
 
   function handleDeleteError() {

@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useToggleReaction } from "@/api/reactions/use-toggle-reaction";
 import ReactionsBar from "./reactions-bar";
+import { usePanel } from "@/hooks/use-panel";
 
 const MessageRenderer = dynamic(() => import("./message-renderer"), {
   ssr: false,
@@ -68,6 +69,7 @@ function Message(props: Readonly<MessageProps>) {
     threadTimestamp,
   } = props;
 
+  const { onOpenMessage } = usePanel();
   const avatarFallbackContent = authorName.charAt(0).toUpperCase();
 
   const {
@@ -80,8 +82,10 @@ function Message(props: Readonly<MessageProps>) {
     onSettled: handleUpdateMessageSettled,
   });
 
-  const { mutateAsync: toggleReaction, isPending: isTogglingReaction } =
-    useToggleReaction();
+  const { mutateAsync: toggleReaction, isPending: _isTogglingReaction } =
+    useToggleReaction({
+      onError: handleToggleError,
+    });
 
   const isMessagePending = isUpdatingMessage;
 
@@ -164,8 +168,7 @@ function Message(props: Readonly<MessageProps>) {
           isAuthor={isAuthor}
           isPending={isMessagePending}
           handleEdit={() => setEditingId(messageId)}
-          handleThread={() => {}}
-          handleDelete={() => {}}
+          handleThread={() => onOpenMessage(messageId)}
           handleReaction={handleToggleReaction}
           hideThreadButton={hideThreadButton}
           messageId={messageId}
@@ -224,8 +227,7 @@ function Message(props: Readonly<MessageProps>) {
           isAuthor={isAuthor}
           isPending={isMessagePending}
           handleEdit={() => setEditingId(messageId)}
-          handleThread={() => {}}
-          handleDelete={() => {}}
+          handleThread={() => onOpenMessage(messageId)}
           handleReaction={handleToggleReaction}
           hideThreadButton={hideThreadButton}
           messageId={messageId}
