@@ -8,7 +8,7 @@ type Options = {
   onSettled?: () => void;
 };
 
-export const useCreateChannel = (options?: Options) => {
+export const useCreateMessage = (options?: Options) => {
   const { isPending, data, error, mutateAsync } = useMutation({
     mutationFn: useConvexMutation(api.messages.create),
     onSuccess: options?.onSuccess,
