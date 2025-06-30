@@ -36,6 +36,7 @@ function Editor(props: Readonly<EditorProps>) {
   const {
     variant,
     onSubmit,
+    onCancel,
     placeholder = "Write something here...",
     defaultValue = [],
     disabled = false,
@@ -49,14 +50,14 @@ function Editor(props: Readonly<EditorProps>) {
 
   //use own refs for this so that no need rerender
   //the main reason for using refs is these values are being used
-  //inside the use effect and we don't want to trigger rerenders
+  //inside the useEffect and we don't want to trigger rerenders
   const submitRef = useRef(onSubmit);
   const placeholderRef = useRef(placeholder);
   const quillRef = useRef<Quill | null>(null);
   const defaultValueRef = useRef(defaultValue);
   const disabledRef = useRef(disabled);
 
-  //extract the image from here
+  //extract the image from here inside the useEffect
   //ref because we don't want to rerender when adding image
   const imageElementRef = useRef<HTMLInputElement>(null);
 
@@ -92,7 +93,15 @@ function Editor(props: Readonly<EditorProps>) {
             enter: {
               key: "Enter",
               handler: () => {
-                console.log("enter pressed");
+                const text = quill.getText();
+                const addedImage = imageElementRef.current?.files?.[0] ?? null;
+                const isEmpty =
+                  !addedImage &&
+                  text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+                if (isEmpty) return;
+
+                const body = JSON.stringify(quill.getContents());
+                submitRef.current?.({ body: body, image: addedImage });
               },
             },
           },
@@ -152,7 +161,7 @@ function Editor(props: Readonly<EditorProps>) {
   }
 
   //updated when text changes, and text changes when the quill ref TEXT_CHANGE event fires off
-  const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+  const isEmpty = !image && text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
   return (
     <div className="flex flex-col">
@@ -160,7 +169,9 @@ function Editor(props: Readonly<EditorProps>) {
         type="file"
         accept="image/*"
         ref={imageElementRef}
-        onChange={(event) => setImage(event.target.files![0])}
+        onChange={(event) => {
+          setImage(event.target.files![0]);
+        }}
         className="hidden"
       />
       <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
@@ -224,7 +235,12 @@ function Editor(props: Readonly<EditorProps>) {
               </Hint>
               <Button
                 disabled={disabled || isEmpty}
-                onClick={() => {}}
+                onClick={() =>
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image,
+                  })
+                }
                 className={cn(
                   "ml-auto p-3",
                   isEmpty
@@ -245,7 +261,7 @@ function Editor(props: Readonly<EditorProps>) {
                 variant={"outline"}
                 size={"sm"}
                 disabled={disabled}
-                onClick={() => {}}
+                onClick={onCancel}
               >
                 Cancel
               </Button>
@@ -254,7 +270,12 @@ function Editor(props: Readonly<EditorProps>) {
                 variant={"outline"}
                 size={"sm"}
                 disabled={disabled || isEmpty}
-                onClick={() => {}}
+                onClick={() =>
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image,
+                  })
+                }
               >
                 Save
               </Button>
