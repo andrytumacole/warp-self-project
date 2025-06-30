@@ -2,6 +2,10 @@ import { format, isToday, isYesterday, differenceInMinutes } from "date-fns";
 import { GetMessagesReturnType } from "@/api/messages/use-get-message";
 import Message from "./message";
 import ChannelMessagesHero from "./channel-messages-hero";
+import { Id } from "../../../convex/_generated/dataModel";
+import { useState } from "react";
+import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
+import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
 
 const MINUTE_THRESHOLD = 5;
 
@@ -29,6 +33,12 @@ function MessageList(props: Readonly<MessageListProps>) {
     loadMore,
     isLoadingMore,
   } = props;
+
+  const workspaceId = useGetWorkspaceId();
+  const { membershipInfo: userMembershipInfo, isLoading } =
+    useGetCurrentMembershipInfo({ workspaceId: workspaceId });
+
+  const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
   const groupedMessagesByDate = data?.reduce(
     (groups, message) => {
@@ -79,16 +89,18 @@ function MessageList(props: Readonly<MessageListProps>) {
                   membershipInfoId={message!.membershipInfoId}
                   authorName={message!.user.name}
                   authorImage={message!.user.image}
-                  isAuthor={false}
+                  isAuthor={
+                    message?.membershipInfoId === userMembershipInfo?._id
+                  }
                   reactions={message!.reactions}
                   body={message!.body}
                   image={message!.image}
                   updatedAt={message!.updatedAt}
                   createdAt={message!._creationTime}
-                  isEditing={false}
-                  setEditingId={() => {}}
+                  isEditing={editingId === message?._id}
+                  setEditingId={setEditingId}
                   isCompact={isCompact}
-                  hideThreadButton={false}
+                  hideThreadButton={variant === "thread"}
                   threadCount={message!.threadCount}
                   threadImage={message!.threadImage}
                   threadTimestamp={message!.threadTimestamp}
