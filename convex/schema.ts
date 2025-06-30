@@ -133,7 +133,7 @@ const authTables = {
   messages: defineTable({
     body: v.string(),
     image: v.optional(v.id("_storage")), //_storage is native collection
-    memberId: v.id("members"),
+    memberId: v.id("membershipInfos"),
     workspaceId: v.id("workspaces"),
     channelId: v.optional(v.id("channels")), //optional because it can come from dms
     parentMessageId: v.optional(v.id("messages")), //it can refer to itself like a reply
