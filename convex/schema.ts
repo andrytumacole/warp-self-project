@@ -129,6 +129,17 @@ const authTables = {
     name: v.string(),
     workspaceId: v.id("workspaces"),
   }).index("by_workspace_id", ["workspaceId"]),
+
+  messages: defineTable({
+    body: v.string(),
+    image: v.optional(v.id("_storage")), //_storage is native collection
+    memberId: v.id("members"),
+    workspaceId: v.id("workspaces"),
+    channelId: v.optional(v.id("channels")), //optional because it can come from dms
+    parentMessageId: v.optional(v.id("messages")), //it can refer to itself like a reply
+    //TODO: add conversation id
+    updatedAt: v.number(),
+  }),
 };
 
 export default defineSchema({
