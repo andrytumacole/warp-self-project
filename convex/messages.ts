@@ -195,6 +195,41 @@ export const create = mutation({
   },
 });
 
+export const update = mutation({
+  args: {
+    id: v.id("messages"),
+    body: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+
+    const message = await ctx.db.get(args.id);
+
+    if (!message) {
+      throw new ConvexError({
+        message: "[error][update message]: Message not found",
+      });
+    }
+
+    const membershipInfo = await getMembershipInfo(
+      ctx,
+      message.workspaceId,
+      userId
+    );
+
+    if (!membershipInfo || membershipInfo._id !== message.membershipInfoId) {
+      throw new ConvexError({
+        message: "[error][update message]: Unauthorized user",
+      });
+    }
+
+    await ctx.db.patch(args.id, {
+      body: args.body,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
 async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
