@@ -9,6 +9,9 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import WorkspaceSidebar from "@/components/workspaces/workspace-sidebar";
+import { Loader } from "lucide-react";
+import { Id } from "../../../../convex/_generated/dataModel";
+import Thread from "@/components/threads/thread";
 
 export default function WorkspaceIdLayout({
   children,
@@ -16,7 +19,7 @@ export default function WorkspaceIdLayout({
   children: React.ReactNode;
 }>) {
   //gets the parentMessageId params in the url
-  const { parentMessageId, onClose: _ } = usePanel();
+  const { parentMessageId, onClose } = usePanel();
   const isPanelShown = !!parentMessageId;
 
   return (
@@ -42,7 +45,19 @@ export default function WorkspaceIdLayout({
             <>
               <ResizableHandle withHandle />
               <ResizablePanel minSize={20} defaultSize={29}>
-                {parentMessageId}
+                {parentMessageId ? (
+                  <Thread
+                    messageId={parentMessageId as Id<"messages">}
+                    onClose={onClose}
+                  />
+                ) : (
+                  <div className="flex flex-col h-full items-center justify-center gap-y-2 overflow-hidden">
+                    <Loader className="size-5 animate-spin text-muted-foreground" />
+                    <p className="text-sm text-center text-muted-foreground">
+                      Fetching thread messages...
+                    </p>
+                  </div>
+                )}
               </ResizablePanel>
             </>
           )}
