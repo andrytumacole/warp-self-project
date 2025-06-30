@@ -54,7 +54,7 @@ export default function WorkspaceIdLayout({
                   <div className="flex flex-col h-full items-center justify-center gap-y-2 overflow-hidden">
                     <Loader className="size-5 animate-spin text-muted-foreground" />
                     <p className="text-sm text-center text-muted-foreground">
-                      Fetching thread messages...
+                      Validating message ID...
                     </p>
                   </div>
                 )}

@@ -138,7 +138,7 @@ function Message(props: Readonly<MessageProps>) {
     >
       <div className="flex gap-2 items-center">
         <Hint label={formatFullTime(new Date(createdAt))}>
-          <button className=" w-[45px] text-xs text-muted-foreground opacity-0 group-hover:opacity-100 leading-[22px] text-center hover:underline">
+          <button className=" min-w-[40px] text-xs text-muted-foreground opacity-0 group-hover:opacity-100 leading-[22px] text-center hover:underline">
             {format(new Date(createdAt), "hh:mm")}
           </button>
         </Hint>
@@ -182,7 +182,7 @@ function Message(props: Readonly<MessageProps>) {
         isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
       )}
     >
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-start">
         <button>
           <Avatar>
             <AvatarImage src={authorImage} alt={authorName} />
@@ -205,7 +205,7 @@ function Message(props: Readonly<MessageProps>) {
           <div className="flex flex-col w-full overflow-hidden ">
             <div className="flex text-sm gap-x-3">
               <button className="font-bold text-primary hover:underline">
-                {authorName}
+                <p className="text-start">{authorName}</p>
               </button>
               <Hint label={formatFullTime(new Date(createdAt))}>
                 <button className="text-xs text-muted-foreground hover:underline">
