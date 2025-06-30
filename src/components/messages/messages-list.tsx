@@ -6,6 +6,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { useState } from "react";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
+import { Loader } from "lucide-react";
 
 const MINUTE_THRESHOLD = 5;
 
@@ -111,6 +112,36 @@ function MessageList(props: Readonly<MessageListProps>) {
             })}
           </div>
         )
+      )}
+      <div
+        className="h-1"
+        //attaches a ref callback
+        ref={(el) => {
+          if (el) {
+            const observer = new IntersectionObserver(
+              ([entry]) => {
+                //isIntersecting means that the element being observed has entered the viewport
+                if (entry.isIntersecting && canLoadMore) {
+                  loadMore();
+                }
+              },
+              {
+                threshold: 1.0, //triggers when 100% is intersecting (in the viewport)
+              }
+            );
+            //attaches the observer to the element
+            observer.observe(el);
+            return () => observer.disconnect(); //cleanup, disposes the observer
+          }
+        }}
+      />
+      {isLoadingMore && (
+        <div className="text-center my-2 relative">
+          <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
+          <span className="relative inline-block bg-[#f5f5f5] px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
+            <Loader className="size-4 animate-spin" />
+          </span>
+        </div>
       )}
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelMessagesHero
