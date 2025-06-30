@@ -130,6 +130,13 @@ const authTables = {
     workspaceId: v.id("workspaces"),
   }).index("by_workspace_id", ["workspaceId"]),
 
+  conversations: defineTable({
+    //convos live in workspaces only and they can only happen one-to-one
+    workspaceId: v.id("workspaces"),
+    memberOneId: v.id("members"),
+    memberTwoId: v.id("members"),
+  }).index("by_workspace_id", ["workspaceId"]),
+
   messages: defineTable({
     body: v.string(),
     image: v.optional(v.id("_storage")), //_storage is native collection
@@ -137,9 +144,28 @@ const authTables = {
     workspaceId: v.id("workspaces"),
     channelId: v.optional(v.id("channels")), //optional because it can come from dms
     parentMessageId: v.optional(v.id("messages")), //it can refer to itself like a reply
-    //TODO: add conversation id
+    conversationId: v.optional(v.id("conversations")),
     updatedAt: v.number(),
-  }),
+  })
+    .index("by_workspace_id", ["workspaceId"])
+    .index("by_member_id", ["memberId"])
+    .index("by_channel_id", ["channelId"])
+    .index("by_conversation_id", ["conversationId"])
+    .index("by_channel_id_parent_message_id_conversation_id", [
+      "channelId",
+      "parentMessageId",
+      "conversationId",
+    ]),
+
+  reactions: defineTable({
+    workspaceId: v.id("workspaces"), //on which workspace
+    messageId: v.id("messages"), //on which message
+    memberId: v.id("members"), //which member sent this
+    value: v.string(), //value of the emoji
+  })
+    .index("by_workspace_id", ["workspaceId"])
+    .index("by_message_id", ["messageId"])
+    .index("by_member_id", ["memberId"]),
 };
 
 export default defineSchema({
