@@ -4,6 +4,7 @@ import useGetChannelById from "@/api/channels/use-get-channel-by-id";
 import useGetMessages from "@/api/messages/use-get-message";
 import ChannelHeader from "@/components/channels/channel-header";
 import ChatInput from "@/components/channels/chat-input";
+import MessageList from "@/components/messages/messages-list";
 import useGetChannelId from "@/hooks/use-get-channel-id";
 import { Loader, TriangleAlert } from "lucide-react";
 
@@ -12,7 +13,7 @@ function ChannelIdPage() {
   const { channel, isLoading: isFetchingChannel } = useGetChannelById({
     channelId: channelId,
   });
-  const { results } = useGetMessages({
+  const { results, status, loadMore } = useGetMessages({
     channelId: channelId,
   });
 
@@ -42,7 +43,15 @@ function ChannelIdPage() {
     <div className="h-full flex flex-col">
       <ChannelHeader initialChannelName={channel.name} />
       {/* placeholder component that takes all remaining space and pushing down the text input */}
-      <div className="flex-1">{JSON.stringify(results)}</div>
+      <MessageList
+        channelName={channel.name}
+        channelCreationTime={channel._creationTime}
+        loadMore={loadMore}
+        isLoadingMore={status === "LoadingMore"}
+        canLoadMore={status === "CanLoadMore"}
+        data={results}
+        variant="channel"
+      />
       <ChatInput placeholder={`Message #${channel.name}`} />
     </div>
   );
