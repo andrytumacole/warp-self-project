@@ -1,6 +1,8 @@
-import { format, isToday, isYesterday } from "date-fns";
+import { format, isToday, isYesterday, differenceInMinutes } from "date-fns";
 import { GetMessagesReturnType } from "@/api/messages/use-get-message";
 import Message from "./message";
+
+const MINUTE_THRESHOLD = 5;
 
 interface MessageListProps {
   memberName?: string;
@@ -59,28 +61,39 @@ function MessageList(props: Readonly<MessageListProps>) {
                 {formatDateLabel(dateKey)}
               </span>
             </div>
-            {messages.map((message, index) => (
-              <Message
-                key={message?._id}
-                id={message!._id}
-                membershipInfoId={message!.membershipInfoId}
-                authorName={message!.user.name}
-                authorImage={message!.user.image}
-                isAuthor={false}
-                reactions={message!.reactions}
-                body={message!.body}
-                image={message!.image}
-                updatedAt={message!.updatedAt}
-                createdAt={message!._creationTime}
-                isEditing={false}
-                setEditingId={() => {}}
-                isCompact={false}
-                hideThreadButton={false}
-                threadCount={message!.threadCount}
-                threadImage={message!.threadImage}
-                threadTimestamp={message!.threadTimestamp}
-              />
-            ))}
+            {messages.map((message, index) => {
+              const prevMessage = messages[index - 1];
+              const isCompact =
+                prevMessage &&
+                prevMessage.user?._id === message!.user?._id &&
+                differenceInMinutes(
+                  new Date(message!._creationTime),
+                  new Date(prevMessage._creationTime)
+                ) < MINUTE_THRESHOLD;
+
+              return (
+                <Message
+                  key={message?._id}
+                  id={message!._id}
+                  membershipInfoId={message!.membershipInfoId}
+                  authorName={message!.user.name}
+                  authorImage={message!.user.image}
+                  isAuthor={false}
+                  reactions={message!.reactions}
+                  body={message!.body}
+                  image={message!.image}
+                  updatedAt={message!.updatedAt}
+                  createdAt={message!._creationTime}
+                  isEditing={false}
+                  setEditingId={() => {}}
+                  isCompact={isCompact}
+                  hideThreadButton={false}
+                  threadCount={message!.threadCount}
+                  threadImage={message!.threadImage}
+                  threadTimestamp={message!.threadTimestamp}
+                />
+              );
+            })}
           </div>
         )
       )}

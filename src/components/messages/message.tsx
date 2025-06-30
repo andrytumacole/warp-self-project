@@ -1,6 +1,10 @@
 import dynamic from "next/dynamic";
 
 import { Doc, Id } from "../../../convex/_generated/dataModel";
+import { format, isToday, isYesterday } from "date-fns";
+
+import Hint from "../global/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const MessageRenderer = dynamic(() => import("./message-renderer"), {
   ssr: false,
@@ -25,7 +29,7 @@ interface MessageProps {
   createdAt: Doc<"messages">["_creationTime"];
   updatedAt: Doc<"messages">["updatedAt"];
   isEditing: boolean;
-  isCompact?: boolean;
+  isCompact: boolean | null;
   setEditingId: (id: Id<"messages"> | null) => void;
   hideThreadButton?: boolean;
   threadCount?: number;
@@ -53,9 +57,67 @@ function Message(props: Readonly<MessageProps>) {
     threadImage,
     threadTimestamp,
   } = props;
-  return (
-    <div>
-      <MessageRenderer rawMessage={body} />
+
+  const avatarFallbackContent = authorName.charAt(0).toUpperCase();
+
+  function formatFullTime(date: Date) {
+    const timeString = `at ${format(date, "h:mm a")}`;
+    if (isToday(date)) {
+      return `Today ${timeString}`;
+    } else if (isYesterday(date)) {
+      return `Yesterday ${timeString}`;
+    }
+
+    return `${format(date, "MMM d, yyyy")} ${timeString}`;
+  }
+
+  return isCompact ? (
+    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative">
+      <div className="flex gap-2 items-center">
+        <Hint label={formatFullTime(new Date(createdAt))}>
+          <button className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 w-[40px] leading-[22px] text-center hover:underline">
+            {format(new Date(createdAt), "hh:mm")}
+          </button>
+        </Hint>
+        <div className="flex flex-col w-full">
+          <MessageRenderer rawMessage={body} />
+          {updatedAt && (
+            <span className="text-xs text-muted-foreground">edited</span>
+          )}
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="flex flex-col  gap-2 p-1.5 px-5 hover:bg-gray-200/60 group relative">
+      <div className="flex gap-2 items-center">
+        <button>
+          <Avatar className="size-10 hover:opacity-75 transition">
+            <AvatarImage src={authorImage} alt={authorName} />
+            <AvatarFallback className="text-white bg-sky-500 text-sm">
+              {avatarFallbackContent}
+            </AvatarFallback>
+          </Avatar>
+        </button>
+        <div className="flex flex-col w-full overflow-hidden">
+          <div className="flex text-sm gap-x-3">
+            <button
+              onClick={() => {}}
+              className="font-bold text-primary hover:underline"
+            >
+              {authorName}
+            </button>
+            <Hint label={formatFullTime(new Date(createdAt))}>
+              <button className="text-xs text-muted-foreground hover:underline">
+                {format(new Date(createdAt), "h:mm a")}
+              </button>
+            </Hint>
+          </div>
+          <MessageRenderer rawMessage={body} />
+          {updatedAt && (
+            <span className="text-xs text-muted-foreground">edited</span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
