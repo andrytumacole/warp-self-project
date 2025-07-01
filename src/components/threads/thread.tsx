@@ -1,23 +1,28 @@
+import { useRef, useState } from "react";
+import useGetChannelId from "@/hooks/use-get-channel-id";
+import dynamic from "next/dynamic";
+import Quill from "quill";
+import { ConvexError } from "convex/values";
+import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
+
+import useGetMessageById from "@/api/messages/use-get-message-by-id";
 import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
-import { useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import useGetMessageById from "@/api/messages/use-get-message-by-id";
-import Message from "../messages/message";
-import Quill from "quill";
 import { useCreateMessage } from "@/api/messages/use-create-message";
 import { useGenerateUploadUrl } from "@/api/upload/use-generate-upload-url";
+import useGetMessages from "@/api/messages/use-get-message";
 
+import Message from "../messages/message";
 import { AlertTriangle, Loader, XIcon } from "lucide-react";
 import { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import useGetChannelId from "@/hooks/use-get-channel-id";
-import { ConvexError } from "convex/values";
 
 const Editor = dynamic(() => import("@/components/input/editor"), {
   ssr: false,
 });
+
+const MINUTE_THRESHOLD = 5;
 
 type MessageSubmitType = {
   body: string;
@@ -53,6 +58,35 @@ function Thread(props: Readonly<ThreadProps>) {
   const { message, isLoading: isFetchingMessage } = useGetMessageById({
     messageId: messageId,
   });
+
+  const { results, status, loadMore } = useGetMessages({
+    channelId: channelId,
+    parentMessageId: message?._id,
+  });
+
+  const canLoadMore = status === "CanLoadMore";
+  const isLoadingMore = status === "LoadingMore";
+
+  const groupedMessagesByDate = results?.reduce(
+    (groups, message) => {
+      const date = new Date(message!._creationTime);
+      //key for grouping
+      const dateKey = format(date, "yyyy-MM-dd");
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].unshift(message);
+      return groups;
+    },
+    {} as Record<string, typeof results>
+  );
+
+  function formatDateLabel(dateString: string) {
+    const date = new Date(dateString);
+    if (isToday(date)) return "Today";
+    if (isYesterday(date)) return "Yesterday";
+    return format(date, "EEEE, MMMM d");
+  }
 
   const {
     data: _messageId,
@@ -159,7 +193,9 @@ function Thread(props: Readonly<ThreadProps>) {
         <div className="flex flex-col h-full items-center justify-center gap-y-2 overflow-hidden">
           <Loader className="size-5 animate-spin text-muted-foreground" />
           <p className="text-sm text-center text-muted-foreground">
-            Fetching thread messages...
+            {status === "LoadingFirstPage"
+              ? "Fetching message details..."
+              : "Fetching thread messages..."}
           </p>
         </div>
       </div>
@@ -175,7 +211,84 @@ function Thread(props: Readonly<ThreadProps>) {
       </div>
       {message ? (
         <>
-          <div>
+          <div className="flex-1 flex flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
+            {Object.entries(groupedMessagesByDate || {}).map(
+              ([dateKey, messages]) => (
+                <div key={dateKey}>
+                  <div className="text-center my-2 relative">
+                    <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
+                    <span className="relative inline-block bg-[#f5f5f5] px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
+                      {formatDateLabel(dateKey)}
+                    </span>
+                  </div>
+                  {messages.map((message, index) => {
+                    const prevMessage = messages[index - 1];
+                    const isCompact =
+                      prevMessage &&
+                      prevMessage.user?._id === message!.user?._id &&
+                      differenceInMinutes(
+                        new Date(message!._creationTime),
+                        new Date(prevMessage._creationTime)
+                      ) < MINUTE_THRESHOLD;
+
+                    return (
+                      <Message
+                        key={message?._id}
+                        messageId={message!._id}
+                        membershipInfoId={message!.membershipInfoId}
+                        authorName={message!.user.name}
+                        authorImage={message!.user.image}
+                        isAuthor={
+                          message?.membershipInfoId === userMembershipInfo?._id
+                        }
+                        reactions={message!.reactions}
+                        body={message!.body}
+                        image={message!.image}
+                        updatedAt={message!.updatedAt}
+                        createdAt={message!._creationTime}
+                        isEditing={editingId === message?._id}
+                        setEditingId={setEditingId}
+                        isCompact={isCompact}
+                        hideThreadButton
+                        threadCount={message!.threadCount}
+                        threadImage={message!.threadImage}
+                        threadTimestamp={message!.threadTimestamp}
+                      />
+                    );
+                  })}
+                </div>
+              )
+            )}
+            <div
+              className="h-1"
+              //attaches a ref callback
+              ref={(el) => {
+                if (el) {
+                  const observer = new IntersectionObserver(
+                    ([entry]) => {
+                      //isIntersecting means that the element being observed has entered the viewport
+                      if (entry.isIntersecting && canLoadMore) {
+                        loadMore();
+                      }
+                    },
+                    {
+                      threshold: 1.0, //triggers when 100% is intersecting (in the viewport)
+                    }
+                  );
+                  //attaches the observer to the element
+                  observer.observe(el);
+                  return () => observer.disconnect(); //cleanup, disposes the observer
+                }
+              }}
+            />
+            {isLoadingMore && (
+              <div className="text-center my-2 relative">
+                <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
+                <span className="relative inline-block bg-[#f5f5f5] px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
+                  <Loader className="size-4 animate-spin" />
+                </span>
+              </div>
+            )}
             <Message
               hideThreadButton
               membershipInfoId={message.membershipInfoId}
@@ -193,6 +306,7 @@ function Thread(props: Readonly<ThreadProps>) {
               setEditingId={setEditingId}
             />
           </div>
+
           <div className="px-4">
             <Editor
               key={editorKey}
