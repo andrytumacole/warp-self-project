@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useGetChannelId from "@/hooks/use-get-channel-id";
 
 import { FaCog } from "react-icons/fa";
@@ -31,6 +31,10 @@ function ChannelHeader(props: Readonly<ChannelHeaderProps>) {
   const [isEditChannelModalOpen, setIsEditChannelModalOpen] = useState(false);
   const [isDeleteChannelModalOpen, setIsDeleteChannelModalOpen] =
     useState(false);
+
+  useEffect(() => {
+    setChannelName(initialChannelName);
+  }, [initialChannelName]);
 
   return (
     <div className="flex items-center justify-between px-4 bg-white border-b h-[49px] overflow-hidden">
