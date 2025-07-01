@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useToggleReaction } from "@/api/reactions/use-toggle-reaction";
 import ReactionsBar from "./reactions-bar";
 import { usePanel } from "@/hooks/use-panel";
+import Threadbar from "./threadbar";
 
 const MessageRenderer = dynamic(() => import("./message-renderer"), {
   ssr: false,
@@ -160,6 +161,12 @@ function Message(props: Readonly<MessageProps>) {
               <span className="text-xs text-muted-foreground">edited</span>
             )}
             <ReactionsBar data={reactions} onChange={handleToggleReaction} />
+            <Threadbar
+              count={threadCount}
+              image={threadImage}
+              timestamp={threadTimestamp}
+              onClick={() => onOpenMessage(messageId)}
+            />
           </div>
         )}
       </div>
@@ -219,6 +226,12 @@ function Message(props: Readonly<MessageProps>) {
               <span className="text-xs text-muted-foreground">edited</span>
             )}
             <ReactionsBar data={reactions} onChange={handleToggleReaction} />
+            <Threadbar
+              count={threadCount}
+              image={threadImage}
+              timestamp={threadTimestamp}
+              onClick={() => onOpenMessage(messageId)}
+            />
           </div>
         )}
       </div>
