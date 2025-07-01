@@ -53,6 +53,41 @@ export const get = query({
   },
 });
 
+export const getById = query({
+  args: {
+    memberId: v.id("membershipInfos"),
+  },
+  handler: async (ctx, args) => {
+    let userId;
+    try {
+      userId = await checkAuthorizedUser(ctx);
+    } catch {
+      return null;
+    }
+
+    const membershipInfo = await ctx.db.get(args.memberId);
+
+    if (!membershipInfo) return null;
+
+    const currentMembershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", membershipInfo.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!currentMembershipInfo) return null;
+
+    const user = await ctx.db.get(membershipInfo.userId);
+    if (!user) return null;
+
+    return {
+      ...membershipInfo,
+      user,
+    };
+  },
+});
+
 export const join = mutation({
   args: {
     joinCode: v.string(),
