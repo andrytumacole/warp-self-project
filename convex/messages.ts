@@ -32,7 +32,7 @@ export const getById = query({
 
     if (!membershipInfo) return null;
 
-    const user = await populateUser(ctx, userId);
+    const user = await populateUser(ctx, membershipInfo.userId);
 
     if (!user) return null;
 

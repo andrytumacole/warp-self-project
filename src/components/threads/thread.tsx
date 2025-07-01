@@ -239,7 +239,7 @@ function Thread(props: Readonly<ThreadProps>) {
                         authorName={message!.user.name}
                         authorImage={message!.user.image}
                         isAuthor={
-                          message?.membershipInfoId === userMembershipInfo?._id
+                          message?.user._id === userMembershipInfo?.userId
                         }
                         reactions={message!.reactions}
                         body={message!.body}
@@ -294,7 +294,7 @@ function Thread(props: Readonly<ThreadProps>) {
               membershipInfoId={message.membershipInfoId}
               authorImage={message.user.image}
               authorName={message.user.name}
-              isAuthor={message.membershipInfoId === userMembershipInfo?._id}
+              isAuthor={message?.user._id === userMembershipInfo?.userId}
               body={message.body}
               isCompact={false}
               image={message.image}
