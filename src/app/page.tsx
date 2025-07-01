@@ -5,6 +5,7 @@ import useGetWorkspaces from "../api/workspaces/use-get-workspaces";
 import { useEffect, useMemo } from "react";
 import { useCreateWorkspaceModal } from "../store/use-create-workspace-modal";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -31,8 +32,9 @@ export default function Home() {
   }, [firstWorkspaceId, isLoading, isModalOpen, setIsModalOpen, router]);
 
   return (
-    <div className="flex flex-col justify-center h-full items-center">
-      <UserAvatarButton />
+    <div className="flex flex-col justify-center h-full items-center gap-y-2">
+      <Loader className="animate-spin size-6" />
+      <p className="text-muted-foreground">Fetching you workspace</p>
     </div>
   );
 }
