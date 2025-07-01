@@ -6,15 +6,16 @@ interface ThreadbarProps {
   count?: number;
   image?: string;
   timestamp?: number;
+  name?: string;
   onClick?: () => void;
 }
 
 function Threadbar(props: Readonly<ThreadbarProps>) {
-  const { count, image, timestamp, onClick } = props;
+  const { count, image, timestamp, onClick, name = "Member" } = props;
 
   if (!count || !timestamp) return null;
 
-  const avatarFallbackContent = "M";
+  const avatarFallbackContent = name.charAt(0).toUpperCase();
 
   return (
     <button

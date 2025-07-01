@@ -47,6 +47,7 @@ interface MessageProps {
   threadCount?: number;
   threadImage?: string;
   threadTimestamp?: number;
+  threadName?: string;
 }
 
 function Message(props: Readonly<MessageProps>) {
@@ -68,6 +69,7 @@ function Message(props: Readonly<MessageProps>) {
     threadCount,
     threadImage,
     threadTimestamp,
+    threadName,
   } = props;
 
   const { onOpenMessage } = usePanel();
@@ -165,6 +167,7 @@ function Message(props: Readonly<MessageProps>) {
               count={threadCount}
               image={threadImage}
               timestamp={threadTimestamp}
+              name={threadName}
               onClick={() => onOpenMessage(messageId)}
             />
           </div>
@@ -230,6 +233,7 @@ function Message(props: Readonly<MessageProps>) {
               count={threadCount}
               image={threadImage}
               timestamp={threadTimestamp}
+              name={threadName}
               onClick={() => onOpenMessage(messageId)}
             />
           </div>

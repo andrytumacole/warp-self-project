@@ -132,6 +132,7 @@ export const get = query({
                 threadCount: thread.count,
                 threadImage: thread.image,
                 threadTimestamp: thread.timestamp,
+                threadName: thread.name,
               };
             })
             .filter((message) => message !== null) //removes null messages
@@ -360,6 +361,7 @@ async function populateThread(ctx: QueryCtx, messageId: Id<"messages">) {
     count: replyMessages.length,
     image: lastReplyMessageUser?.image,
     timestamp: lastReplyMessage._creationTime,
+    name: lastReplyMessageUser?.name,
   };
 }
 
