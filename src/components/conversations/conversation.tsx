@@ -6,6 +6,8 @@ import useGetMessages from "@/api/messages/use-get-message";
 
 import { Loader } from "lucide-react";
 import ConversationHeader from "./conversation-header";
+import ConversationsChatInput from "./conversations-chat-input";
+import MessageList from "../messages/messages-list";
 
 interface ConversationProps {
   id: Id<"conversations">;
@@ -36,6 +38,19 @@ function Conversation(props: Readonly<ConversationProps>) {
       <ConversationHeader
         memberName={membershipInfo?.user.name}
         memberImage={membershipInfo?.user.image}
+      />
+      <MessageList
+        data={results}
+        variant="conversation"
+        memberImage={membershipInfo?.user.image}
+        memberName={membershipInfo?.user.name}
+        loadMore={loadMore}
+        isLoadingMore={status === "LoadingMore"}
+        canLoadMore={status === "CanLoadMore"}
+      />
+      <ConversationsChatInput
+        placeholder={`Message ${membershipInfo?.user.name}`}
+        conversationId={id}
       />
     </div>
   );

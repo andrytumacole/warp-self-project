@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <div className="flex flex-col justify-center h-full items-center gap-y-2">
       <Loader className="animate-spin size-6" />
-      <p className="text-muted-foreground">Fetching you workspace</p>
+      <p className="text-muted-foreground">Fetching your workspace</p>
     </div>
   );
 }

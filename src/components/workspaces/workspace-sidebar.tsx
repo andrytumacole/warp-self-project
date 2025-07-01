@@ -16,10 +16,12 @@ import useGetMembersByWorkspaceId from "@/api/membership-infos/use-get-members-b
 import WorkspaceSidebarUserItem from "./workspace-sidebar-user-item";
 import { useCreateChannelModal } from "@/store/use-create-channel-modal";
 import useGetChannelId from "@/hooks/use-get-channel-id";
+import useGetMemberId from "@/hooks/use-get-member-id";
 
 function WorkspaceSidebar() {
   const workspaceId = useGetWorkspaceId();
   const channelId = useGetChannelId();
+  const memberId = useGetMemberId();
   const [_isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
     useCreateChannelModal();
   const { membershipInfo, isLoading: isFetchingMembershipInfo } =
@@ -108,6 +110,7 @@ function WorkspaceSidebar() {
               label={memberItem.user.name ?? "Anonymous"}
               image={memberItem.user.image}
               id={memberItem._id}
+              variant={memberItem._id === memberId ? "active" : "default"}
             />
           );
         })}

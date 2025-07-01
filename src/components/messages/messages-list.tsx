@@ -7,6 +7,7 @@ import { useState } from "react";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
 import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
 import { Loader } from "lucide-react";
+import ConversationsHero from "../conversations/conversations-hero";
 
 const MINUTE_THRESHOLD = 5;
 
@@ -148,6 +149,9 @@ function MessageList(props: Readonly<MessageListProps>) {
           name={channelName}
           creationTime={channelCreationTime}
         />
+      )}
+      {variant === "conversation" && (
+        <ConversationsHero name={memberName} image={memberImage} />
       )}
     </div>
   );
