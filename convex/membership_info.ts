@@ -168,6 +168,88 @@ export const update = mutation({
   },
 });
 
+export const remove = mutation({
+  args: {
+    id: v.id("membershipInfos"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+
+    const membershipInfo = await ctx.db.get(args.id);
+    if (!membershipInfo)
+      throw new ConvexError({
+        message: "[client][remove membership info] member not found",
+      });
+
+    const currMembershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", membershipInfo.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!currMembershipInfo) {
+      throw new ConvexError({
+        message: "[client][remove membership info]: Unauthorized user",
+      });
+    }
+
+    if (membershipInfo.role === "admin") {
+      throw new ConvexError({
+        message:
+          "[client][remove membership info]: Cannot remove an admin in the workspace",
+      });
+    }
+
+    if (membershipInfo._id === args.id && currMembershipInfo.role === "admin") {
+      throw new ConvexError({
+        message:
+          "[client][remove membership info]: Cannot remove self if an admin in the workspace",
+      });
+    }
+
+    const [messages, reactions, conversations] = await Promise.all([
+      ctx.db
+        .query("messages")
+        .withIndex("by_member_id", (q) =>
+          q.eq("membershipInfoId", membershipInfo._id)
+        )
+        .collect(),
+      ctx.db
+        .query("reactions")
+        .withIndex("by_member_id", (q) =>
+          q.eq("membershipInfoId", membershipInfo._id)
+        )
+        .collect(),
+      ctx.db
+        .query("conversations")
+        .filter((q) =>
+          q.or(
+            q.eq(q.field("memberOneId"), membershipInfo._id),
+            q.eq(q.field("memberTwoId"), membershipInfo._id)
+          )
+        )
+        .collect(),
+    ]);
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
+    for (const reaction of reactions) {
+      await ctx.db.delete(reaction._id);
+    }
+
+    for (const convo of conversations) {
+      await ctx.db.delete(convo._id);
+    }
+
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+});
+
 async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
