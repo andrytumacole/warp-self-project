@@ -1,4 +1,6 @@
 import { useRemoveMember } from "@/api/membership-infos/use-remove-member";
+import { usePanel } from "@/hooks/use-panel";
+import { useRouter } from "next/navigation";
 
 import {
   Dialog,
@@ -13,7 +15,6 @@ import {
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Id } from "../../../convex/_generated/dataModel";
-import { usePanel } from "@/hooks/use-panel";
 
 type RemoveType = "Leave" | "Remove";
 
@@ -27,6 +28,7 @@ interface ConfirmRemoveUserModalProp {
 function ConfirmRemoveUserModal(props: Readonly<ConfirmRemoveUserModalProp>) {
   const { profileMemberId, onClose } = usePanel();
   const { isOpen, setIsOpen, membershipInfoId, type } = props;
+  const router = useRouter();
 
   const {
     data: _removedMemberId,
@@ -57,6 +59,10 @@ function ConfirmRemoveUserModal(props: Readonly<ConfirmRemoveUserModalProp>) {
 
   function handleRemoveSettled() {
     setIsOpen(false);
+    if (type === "Leave") {
+      //if leaving the workplace, then go to home
+      router.replace("/");
+    }
   }
 
   async function handleRemove() {
