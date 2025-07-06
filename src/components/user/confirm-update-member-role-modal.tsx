@@ -21,7 +21,9 @@ interface ConfirmRemoveUserModalProp {
   role: "admin" | "member";
 }
 
-function ConfirmRemoveUserModal(props: Readonly<ConfirmRemoveUserModalProp>) {
+function ConfirmUpdateMemberRoleModal(
+  props: Readonly<ConfirmRemoveUserModalProp>
+) {
   const { isOpen, setIsOpen, membershipInfoId, role } = props;
 
   const {
@@ -95,4 +97,4 @@ function ConfirmRemoveUserModal(props: Readonly<ConfirmRemoveUserModalProp>) {
     </Dialog>
   );
 }
-export default ConfirmRemoveUserModal;
+export default ConfirmUpdateMemberRoleModal;
