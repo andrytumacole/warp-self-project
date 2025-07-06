@@ -133,6 +133,41 @@ export const join = mutation({
   },
 });
 
+export const update = mutation({
+  args: {
+    id: v.id("membershipInfos"),
+    role: v.union(v.literal("admin"), v.literal("member")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await checkAuthorizedUser(ctx);
+
+    const membershipInfo = await ctx.db.get(args.id);
+    if (!membershipInfo)
+      throw new ConvexError({
+        message: "[client][update membership info] member not found",
+      });
+
+    const currMembershipInfo = await ctx.db
+      .query("membershipInfos")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", membershipInfo.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!currMembershipInfo || currMembershipInfo.role !== "admin") {
+      throw new ConvexError({
+        message: "[client][update membership info]: Unauthorized user",
+      });
+    }
+
+    await ctx.db.patch(args.id, {
+      role: args.role,
+    });
+
+    return args.id;
+  },
+});
+
 async function checkAuthorizedUser(ctx: MutationCtx | QueryCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
