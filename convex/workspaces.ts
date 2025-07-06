@@ -159,28 +159,51 @@ export const remove = mutation({
     await checkAuthorizedUserRole(ctx, args.id, userId);
 
     //get all membership info related to the workspace to be deleted
-    const [membershipInfos] = await Promise.all([
-      ctx.db
-        .query("membershipInfos")
-        .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
-        .collect(),
-    ]);
+    const [membershipInfos, channels, conversations, messages, reactions] =
+      await Promise.all([
+        ctx.db
+          .query("membershipInfos")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+        ctx.db
+          .query("channels")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+
+        ctx.db
+          .query("conversations")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+        ctx.db
+          .query("messages")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+        ctx.db
+          .query("reactions")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+      ]);
 
     //delete each associated membership info
     for (const memInfo of membershipInfos) {
       await ctx.db.delete(memInfo._id);
     }
 
-    const [channels] = await Promise.all([
-      ctx.db
-        .query("channels")
-        .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
-        .collect(),
-    ]);
-
     //delete each associated channel
     for (const channel of channels) {
       await ctx.db.delete(channel._id);
+    }
+
+    for (const convo of conversations) {
+      await ctx.db.delete(convo._id);
+    }
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
+    for (const reaction of reactions) {
+      await ctx.db.delete(reaction._id);
     }
 
     //delete the workspace doc
