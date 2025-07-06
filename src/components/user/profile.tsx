@@ -12,11 +12,9 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
-import { useUpdateMemberRole } from "@/api/membership-infos/use-update-member-role";
-import { useRemoveMember } from "@/api/membership-infos/use-remove-member";
 import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
 import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
-import ConfirmRemoveUserModal from "./confirm-remove-user-modal";
+import ConfirmRemoveUserModal from "./confirm-remove-member-modal";
 import { useState } from "react";
 
 interface ProfileProps {
@@ -41,13 +39,6 @@ function Profile(props: Readonly<ProfileProps>) {
   } = useGetCurrentMembershipInfo({
     workspaceId: workspaceId,
   });
-
-  const {
-    data: updatedMemberId,
-    error: updateMemberError,
-    isPending: isUpdatingMemberRole,
-    mutateAsync: updateMemberRole,
-  } = useUpdateMemberRole();
 
   if (isFetchingMember || isFetchingMembershipInfo) {
     return (

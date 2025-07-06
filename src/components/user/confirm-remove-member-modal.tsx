@@ -41,7 +41,6 @@ function ConfirmRemoveUserModal(props: Readonly<ConfirmRemoveUserModalProp>) {
 
   function handleRemoveSuccess() {
     toast("Member successfully removed from workspace");
-    //close the thread of the message if it is open
     if (profileMemberId === membershipInfoId) {
       onClose();
     }
