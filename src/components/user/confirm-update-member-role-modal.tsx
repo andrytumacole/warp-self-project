@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
@@ -60,15 +59,6 @@ function ConfirmUpdateMemberRoleModal(
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant={"outline"}
-          className="w-full"
-          disabled={isUpdatingMemberRole}
-        >
-          Change
-        </Button>
-      </DialogTrigger>
       <DialogContent className="[&>button]:hidden">
         <DialogHeader>
           <DialogTitle>
