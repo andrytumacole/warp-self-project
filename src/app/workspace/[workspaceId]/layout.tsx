@@ -9,9 +9,9 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import WorkspaceSidebar from "@/components/workspaces/workspace-sidebar";
-import { Loader } from "lucide-react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import Thread from "@/components/threads/thread";
+import Profile from "@/components/user/profile";
 
 export default function WorkspaceIdLayout({
   children,
@@ -19,8 +19,8 @@ export default function WorkspaceIdLayout({
   children: React.ReactNode;
 }>) {
   //gets the parentMessageId params in the url
-  const { parentMessageId, onClose } = usePanel();
-  const isPanelShown = !!parentMessageId;
+  const { parentMessageId, profileMemberId, onClose } = usePanel();
+  const isPanelShown = !!parentMessageId || !!profileMemberId;
 
   return (
     <div className="h-full bg-[#f5f5f5]">
@@ -45,24 +45,40 @@ export default function WorkspaceIdLayout({
             <>
               <ResizableHandle withHandle />
               <ResizablePanel minSize={20} defaultSize={29}>
-                {parentMessageId ? (
-                  <Thread
-                    messageId={parentMessageId as Id<"messages">}
-                    onClose={onClose}
-                  />
-                ) : (
-                  <div className="flex flex-col h-full items-center justify-center gap-y-2 overflow-hidden">
-                    <Loader className="size-5 animate-spin text-muted-foreground" />
-                    <p className="text-sm text-center text-muted-foreground">
-                      Validating message ID...
-                    </p>
-                  </div>
-                )}
+                <RenderPanelContent
+                  isPanelShown={isPanelShown}
+                  onClose={onClose}
+                  parentMessageId={parentMessageId}
+                  profileMemberId={profileMemberId}
+                />
               </ResizablePanel>
             </>
           )}
         </ResizablePanelGroup>
       </div>
     </div>
+  );
+}
+
+interface RenderPanelContentProps {
+  isPanelShown: boolean;
+  parentMessageId: string | null;
+  onClose: () => void;
+  profileMemberId: string | null;
+}
+
+function RenderPanelContent(props: Readonly<RenderPanelContentProps>) {
+  const { isPanelShown, parentMessageId, onClose, profileMemberId } = props;
+  if (!isPanelShown) return;
+  if (parentMessageId) {
+    return (
+      <Thread messageId={parentMessageId as Id<"messages">} onClose={onClose} />
+    );
+  }
+  return (
+    <Profile
+      profileMemberId={profileMemberId as Id<"membershipInfos">}
+      onClose={onClose}
+    />
   );
 }

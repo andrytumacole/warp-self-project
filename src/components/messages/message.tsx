@@ -72,7 +72,7 @@ function Message(props: Readonly<MessageProps>) {
     threadName,
   } = props;
 
-  const { onOpenMessage } = usePanel();
+  const { onOpenMessage, onOpenProfile } = usePanel();
   const avatarFallbackContent = authorName.charAt(0).toUpperCase();
 
   const {
@@ -85,12 +85,12 @@ function Message(props: Readonly<MessageProps>) {
     onSettled: handleUpdateMessageSettled,
   });
 
-  const { mutateAsync: toggleReaction, isPending: _isTogglingReaction } =
+  const { mutateAsync: toggleReaction, isPending: isTogglingReaction } =
     useToggleReaction({
       onError: handleToggleError,
     });
 
-  const isMessagePending = isUpdatingMessage;
+  const isMessagePending = isUpdatingMessage || isTogglingReaction;
 
   function handleUpdateMessageSuccess() {
     toast("Message has been edited");
@@ -193,7 +193,7 @@ function Message(props: Readonly<MessageProps>) {
       )}
     >
       <div className="flex gap-2 items-start">
-        <button>
+        <button onClick={() => onOpenProfile(membershipInfoId)}>
           <Avatar>
             <AvatarImage src={authorImage} alt={authorName} />
             <AvatarFallback className="text-white bg-sky-500 text-sm">
@@ -214,7 +214,10 @@ function Message(props: Readonly<MessageProps>) {
         ) : (
           <div className="flex flex-col w-full overflow-hidden ">
             <div className="flex text-sm gap-x-3">
-              <button className="font-bold text-primary hover:underline">
+              <button
+                className="font-bold text-primary hover:underline"
+                onClick={() => onOpenProfile(membershipInfoId)}
+              >
                 <p className="text-start">{authorName}</p>
               </button>
               <Hint label={formatFullTime(new Date(createdAt))}>
