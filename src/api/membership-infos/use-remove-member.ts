@@ -8,7 +8,7 @@ type Options = {
   onSettled?: () => void;
 };
 
-export const useDeleteMember = (options?: Options) => {
+export const useRemoveMember = (options?: Options) => {
   const { isPending, data, error, mutateAsync } = useMutation({
     mutationFn: useConvexMutation(api.membership_info.remove),
     onSuccess: options?.onSuccess,

@@ -1,11 +1,23 @@
 import useGetMemberById from "@/api/membership-infos/use-get-member-by-id";
 import { Id } from "../../../convex/_generated/dataModel";
-import { AlertTriangle, Loader, MailIcon, XIcon } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDownIcon,
+  Loader,
+  MailIcon,
+  XIcon,
+} from "lucide-react";
 import { Button } from "../ui/button";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
+import { useUpdateMemberRole } from "@/api/membership-infos/use-update-member-role";
+import { useRemoveMember } from "@/api/membership-infos/use-remove-member";
+import useGetCurrentMembershipInfo from "@/api/membership-infos/use-get-current-membership-info";
+import useGetWorkspaceId from "@/hooks/use-get-workspace-id";
+import ConfirmRemoveUserModal from "./confirm-remove-user-modal";
+import { useState } from "react";
 
 interface ProfileProps {
   profileMemberId: Id<"membershipInfos">;
@@ -18,7 +30,26 @@ function Profile(props: Readonly<ProfileProps>) {
     id: profileMemberId,
   });
 
-  if (isFetchingMember) {
+  const [isConfirmRemoveModalOpen, setIsConfirmRemoveModalOpen] =
+    useState(false);
+
+  const workspaceId = useGetWorkspaceId();
+
+  const {
+    membershipInfo: currMembershipInfo,
+    isLoading: isFetchingMembershipInfo,
+  } = useGetCurrentMembershipInfo({
+    workspaceId: workspaceId,
+  });
+
+  const {
+    data: updatedMemberId,
+    error: updateMemberError,
+    isPending: isUpdatingMemberRole,
+    mutateAsync: updateMemberRole,
+  } = useUpdateMemberRole();
+
+  if (isFetchingMember || isFetchingMembershipInfo) {
     return (
       <div className="h-full flex flex-col">
         <div className="h-[49px] flex justify-between items-center px-4 border-b">
@@ -78,6 +109,33 @@ function Profile(props: Readonly<ProfileProps>) {
       </div>
       <div className="flex-col flex p-4">
         <p className="text-xl font-bold">{membershipInfo.user.name}</p>
+        {currMembershipInfo?.role === "admin" &&
+        currMembershipInfo._id !== profileMemberId ? (
+          <div className="flex items-center gap-2 mt-4">
+            <Button variant="outline" className="w-full capitalize">
+              {membershipInfo.role}
+              <ChevronDownIcon className="size-4 ml-2" />
+            </Button>
+            <ConfirmRemoveUserModal
+              membershipInfoId={profileMemberId}
+              isOpen={isConfirmRemoveModalOpen}
+              setIsOpen={setIsConfirmRemoveModalOpen}
+              type="Remove"
+            />
+          </div>
+        ) : (
+          currMembershipInfo?._id === profileMemberId &&
+          currMembershipInfo.role !== "admin" && (
+            <div className="mt-4">
+              <ConfirmRemoveUserModal
+                membershipInfoId={profileMemberId}
+                isOpen={isConfirmRemoveModalOpen}
+                setIsOpen={setIsConfirmRemoveModalOpen}
+                type="Leave"
+              />
+            </div>
+          )
+        )}
       </div>
       <Separator />
       <div className="flex flex-col p-4">

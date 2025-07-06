@@ -201,7 +201,10 @@ export const remove = mutation({
       });
     }
 
-    if (membershipInfo._id === args.id && currMembershipInfo.role === "admin") {
+    if (
+      currMembershipInfo._id === args.id &&
+      currMembershipInfo.role === "admin"
+    ) {
       throw new ConvexError({
         message:
           "[client][remove membership info]: Cannot remove self if an admin in the workspace",
